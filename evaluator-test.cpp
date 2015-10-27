@@ -17,7 +17,15 @@ int main()
     StaticCheckEQ< IsEqual< Int<8>, Int<8> >::value, Bool<true> >();
 
 
-    // 
+    // Pair
+    typedef Pair< Pair< Int<4>, Bool<true> >,
+                  Pair< Pair<Int<2>, Unit>, 
+                        Bool<false> > > 
+            P;
+    StaticCheckEQ< Fst< Fst<P>::value >::value, Int<4> >();
+    StaticCheckEQ< Snd< Fst< Snd<P>::value >::value >::value, Unit >();
+    StaticCheckEQ< Snd< Snd<P>::value >::value, Bool<false> >();
+
 
     return 0;
 }

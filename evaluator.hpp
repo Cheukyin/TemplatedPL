@@ -11,7 +11,7 @@ namespace TPL
     // Data Type
     template<int N> struct Int;
     template<bool B> struct Bool;
-
+    struct Unit;
 
     // -----------------------------
     // Add
@@ -40,6 +40,18 @@ namespace TPL
 
 
     // ------------------------------------
+    // Pair
+    template<class T1, class T2> struct Pair;
+    
+    template<class T>struct Fst;
+    template<class T1, class T2>
+    struct Fst< Pair<T1, T2> >
+    { typedef T1 value; };
+
+    template<class T>struct Snd;
+    template<class T1, class T2>
+    struct Snd< Pair<T1, T2> >
+    { typedef T2 value; };
 }
 
 #endif //EVALUATOR_H_
