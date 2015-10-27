@@ -2,7 +2,7 @@
 #include "utils.hpp"
 
 using namespace TPL;
-using namespace CYTL::UTIL;
+using CYTL::UTIL::StaticCheckEQ;
 
 int main()
 {
@@ -17,7 +17,7 @@ int main()
     StaticCheckEQ< IsEqual< Int<8>, Int<8> >::value, Bool<true> >();
 
 
-    // Pair
+    // Pair Testing
     typedef Pair< Pair< Int<4>, Bool<true> >,
                   Pair< Pair<Int<2>, Unit>, 
                         Bool<false> > > 
@@ -27,20 +27,20 @@ int main()
     StaticCheckEQ< Snd< Snd<P>::value >::value, Bool<false> >();
 
 
-    // List
-    StaticCheckEQ< List_Ref< List< Int<0>, Int<1>, Int<2>, Int<3> >, Int<2> >::value,
+    // List Testing
+    StaticCheckEQ< ListRef< List< Int<0>, Int<1>, Int<2>, Int<3> >, Int<2> >::value,
                    Int<2> >();
-    StaticCheckEQ< List_Ref< List< Int<3> >, Int<0> >::value, Int<3> >();
+    StaticCheckEQ< ListRef< List< Int<3> >, Int<0> >::value, Int<3> >();
 
     typedef List< List< Int<2>, Bool<false> >, 
                   List< Int<2>, Bool<true> >, 
                   List< Int<4> > >  
             L1;
-    StaticCheckEQ< List_Ref< List_Ref< L1, Int<1> >::value, Int<1> >::value, Bool<true> >();
-    StaticCheckEQ< List_Ref< List_Ref< L1, Int<2> >::value, Int<0> >::value, Int<4> >();
+    StaticCheckEQ< ListRef< ListRef< L1, Int<1> >::value, Int<1> >::value, Bool<true> >();
+    StaticCheckEQ< ListRef< ListRef< L1, Int<2> >::value, Int<0> >::value, Int<4> >();
 
 
-    // if-then-else
+    // if-then-else Testing
     StaticCheckEQ< If_Then_Else< IsGreater< Int<5>, Int<8> >::value,
                                  L1,
                                  P>::value,
@@ -49,6 +49,6 @@ int main()
                                  L1,
                                  P>::value,
                    L1 >();
-   
+
     return 0;
 }

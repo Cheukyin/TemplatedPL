@@ -5,13 +5,13 @@
 
 namespace TPL
 {
-    using namespace CYTL::UTIL;
-
     // ----------------------------
-    // Data Type
+    // Basic Data Type
     template<int N> struct Int;
     template<bool B> struct Bool;
+    template<int N> struct Var;
     struct Unit;
+
 
     // -----------------------------
     // Add
@@ -65,12 +65,12 @@ namespace TPL
     template<class T, class... T_Rest> struct List;
 
     // List.N
-    template<class T, class N> struct List_Ref;
+    template<class T, class N> struct ListRef;
     template<class T, class... T_Rest, int N>
-    struct List_Ref< List<T, T_Rest...>, Int<N> >
-    { typedef typename List_Ref< List<T_Rest...>, Int<N-1> >::value value; };
+    struct ListRef< List<T, T_Rest...>, Int<N> >
+    { typedef typename ListRef< List<T_Rest...>, Int<N-1> >::value value; };
     template<class T, class... T_Rest>
-    struct List_Ref< List<T, T_Rest...>, Int<0> >
+    struct ListRef< List<T, T_Rest...>, Int<0> >
     { typedef T value; };
     
 
@@ -83,6 +83,11 @@ namespace TPL
     template<class T1, class T2>
     struct If_Then_Else<Bool<false>, T1, T2>
     { typedef T2 value; };
+
+
+    //--------------------------------------
+    // Env
+    
 }
 
 #endif //EVALUATOR_H_
