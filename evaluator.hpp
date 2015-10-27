@@ -73,6 +73,16 @@ namespace TPL
     struct List_Ref< List<T, T_Rest...>, Int<0> >
     { typedef T value; };
     
+
+    // ------------------------------------
+    // if-then-else
+    template<class Cond, class T1, class T2> struct If_Then_Else;
+    template<class T1, class T2>
+    struct If_Then_Else<Bool<true>, T1, T2>
+    { typedef T1 value; };
+    template<class T1, class T2>
+    struct If_Then_Else<Bool<false>, T1, T2>
+    { typedef T2 value; };
 }
 
 #endif //EVALUATOR_H_

@@ -38,7 +38,17 @@ int main()
             L1;
     StaticCheckEQ< List_Ref< List_Ref< L1, Int<1> >::value, Int<1> >::value, Bool<true> >();
     StaticCheckEQ< List_Ref< List_Ref< L1, Int<2> >::value, Int<0> >::value, Int<4> >();
-   
 
+
+    // if-then-else
+    StaticCheckEQ< If_Then_Else< IsGreater< Int<5>, Int<8> >::value,
+                                 L1,
+                                 P>::value,
+                    P >();
+    StaticCheckEQ< If_Then_Else< IsLess< Int<5>, Int<8> >::value,
+                                 L1,
+                                 P>::value,
+                   L1 >();
+   
     return 0;
 }
