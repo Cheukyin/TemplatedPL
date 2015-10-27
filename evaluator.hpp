@@ -1,0 +1,4 @@
+namespace TPL
+{
+    struct NullType;
+}
