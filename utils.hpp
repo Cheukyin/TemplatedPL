@@ -8,8 +8,7 @@ namespace CYTL
         template<bool> struct ComileTimeCheck;
         template<> struct ComileTimeCheck<true> {};
 
-        template<class T1, class T2>
-        struct StaticCheckEQ;
+        template<class T1, class T2> struct StaticCheckEQ;
         template<class T> struct StaticCheckEQ<T, T> {};
     }
 }

@@ -23,16 +23,20 @@ namespace TPL
 
     // ----------------------------------
     // Comparing
+
+    // >
     template<class T1, class T2> struct IsGreater;
     template<int N1, int N2>
     struct IsGreater< Int<N1>, Int<N2> >
     { typedef Bool<(N1>N2)> value; };
 
+    // <
     template<class T1, class T2> struct IsLess;
     template<int N1, int N2>
     struct IsLess< Int<N1>, Int<N2> >
     { typedef Bool<(N1<N2)> value; };
 
+    // ==
     template<class T1, class T2> struct IsEqual;
     template<int N1, int N2>
     struct IsEqual< Int<N1>, Int<N2> >
@@ -43,15 +47,32 @@ namespace TPL
     // Pair
     template<class T1, class T2> struct Pair;
     
+    // Pair.1
     template<class T>struct Fst;
     template<class T1, class T2>
     struct Fst< Pair<T1, T2> >
     { typedef T1 value; };
 
+    // Pair.2
     template<class T>struct Snd;
     template<class T1, class T2>
     struct Snd< Pair<T1, T2> >
     { typedef T2 value; };
+
+
+    // -----------------------------------
+    // List
+    template<class T, class... T_Rest> struct List;
+
+    // List.N
+    template<class T, class N> struct List_Ref;
+    template<class T, class... T_Rest, int N>
+    struct List_Ref< List<T, T_Rest...>, Int<N> >
+    { typedef typename List_Ref< List<T_Rest...>, Int<N-1> >::value value; };
+    template<class T, class... T_Rest>
+    struct List_Ref< List<T, T_Rest...>, Int<0> >
+    { typedef T value; };
+    
 }
 
 #endif //EVALUATOR_H_
