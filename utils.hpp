@@ -15,26 +15,39 @@ namespace CYTL
 
 
         // -----------------------------------------
+        // IsEQ
+        template<class T1, class T2> 
+        struct IsEQ
+        { const bool Result = false; };
+        template<class T> 
+        struct IsEQ<T, T>
+        { const bool Result = true; };
+
+
+        // -----------------------------------------
         // Int2Type
         template<int N> 
         struct Int2Type
         { const int v = N; };
 
 
-        // -----------------------------------------
-        // list
-        template<class T, class... T_Rest> struct List;
+        // ------------------------------------
+        // Select
+        template<bool B, class T1, class T2> struct Select;
+        template<class T1, class T2>
+        struct Select<true, T1, T2>
+        { typedef T1 value; };
+        template<class T1, class T2>
+        struct Select<false, T1, T2>
+        { typedef T2 value; };
 
-        // List.N
-        template<class T, int N> struct ListRef;
-        template<class T, class... T_Rest, int N>
-        struct ListRef<List<T, T_Rest...>, N>
-        {
-            typedef typename ListRef<List<T_Rest...>, N-1>::value value;
-        };
-        template<class T, class... T_Rest>
-        struct ListRef<List<T, T_Rest...>, 0>
-        { typedef T value; };
+
+        // ------------------------------------
+        // enable_if
+        template<bool B, class T> struct enable_if;
+        template<class T>
+        struct enable_if<true, T>
+        { typedef T type; };
     }
 }
 

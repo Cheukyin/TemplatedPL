@@ -5,6 +5,8 @@
 
 namespace TPL
 {
+    using CYTL::UTIL::enable_if;
+
     // ----------------------------
     // Basic Data Type
     template<int N> struct Int;
@@ -62,18 +64,49 @@ namespace TPL
 
     // -----------------------------------
     // List
-    template<class T, class... T_Rest> struct List;
+    template<class T, class... T_Rest> 
+    struct List
+    { typedef Pair< T, typename List<T_Rest...>::value > value; };
+    template<class T>
+    struct List<T>
+    { typedef Pair<T, Unit> value; };
+
+    //IsList
+    template<class T>
+    struct IsList
+    { static const bool value = false; };
+    template<class T1, class T2>
+    struct IsList< Pair<T1, T2> >
+    { static const bool value = IsList<T2>::value; };
+    template<class T>
+    struct IsList< Pair<T, Unit> >
+    { static const bool value = true; };
+    template<>
+    struct IsList<Unit>
+    { static const bool value = true; };
 
     // List.N
     template<class T, class N> struct ListRef;
-    template<class T, class... T_Rest, int N>
-    struct ListRef< List<T, T_Rest...>, Int<N> >
-    { typedef typename ListRef< List<T_Rest...>, Int<N-1> >::value value; };
-    template<class T, class... T_Rest>
-    struct ListRef< List<T, T_Rest...>, Int<0> >
-    { typedef T value; };
-    
+    template<class T1, class T2, int N>
+    struct ListRef< Pair<T1, T2>, Int<N> >
+    { typedef typename ListRef< T2, Int<N-1> >::value value; };
+    template<class T1, class T2>
+    struct ListRef< Pair<T1, T2>, Int<0> >
+    {
+        typedef typename enable_if<IsList<T2>::value, T2>::type islist;
+        typedef T1 value;
+    };
 
+    // ListAppend
+    template<class L, class NewT> struct ListAppend;
+    template<class H, class T, class NewT>
+    struct ListAppend<Pair<H, T>, NewT>
+    { typedef Pair< H, typename ListAppend<T, NewT>::value > value; };
+    template<class NewT>
+    struct ListAppend<Unit, NewT>
+    { typedef Pair<NewT, Unit> value; };
+    
+    
     // ------------------------------------
     // if-then-else
     template<class Cond, class T1, class T2> struct If_Then_Else;
