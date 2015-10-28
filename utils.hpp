@@ -5,6 +5,11 @@ namespace CYTL
 {
     namespace UTIL
     {
+        //---------------------------------------------
+        // EmptyType
+        struct EmptyType;
+
+
         // ----------------------------------------------
         // Static Checker
         template<bool> struct ComileTimeCheck;

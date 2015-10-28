@@ -3,8 +3,9 @@
 
 
 using namespace TPL;
-using CYTL::UTIL::StaticCheckEQ;
-using CYTL::UTIL::ComileTimeCheck;
+using namespace CYTL;
+using UTIL::StaticCheckEQ;
+using UTIL::ComileTimeCheck;
 
 
 int main()
@@ -74,6 +75,26 @@ int main()
                                  L1,
                                  P>::value,
                    L1 >();
+
+
+    // -----------------------------------------------------
+    // VarValList
+    typedef VarValList< Var<0>, Int<0>,
+                        VarValList< Var<1>, Int<1>, EmptyVarValList > >
+            VarValL0;
+    typedef VarValList< Var<2>, Int<2>, 
+                        VarValList< Var<0>, Int<0>,
+                                    VarValList< Var<1>, Int<1>, 
+                                                EmptyVarValList > > >
+            VarValL1;
+    StaticCheckEQ< VarValListExtend< Var<2>, Int<2>, VarValL0 >::value,
+                   VarValL1 >;
+
+    // VarValListLookup
+    StaticCheckEQ< VarValListLookup<Var<2>, VarValL1>::value, Int<2> >();
+    StaticCheckEQ< VarValListLookup<Var<0>, VarValL1>::value, Int<0> >();
+    StaticCheckEQ< VarValListLookup<Var<1>, VarValL1>::value, Int<1> >();
+    StaticCheckEQ< VarValListLookup<Var<3>, VarValL1>::value, UTIL::EmptyType >();
 
     return 0;
 }

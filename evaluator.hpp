@@ -6,6 +6,7 @@
 namespace TPL
 {
     using CYTL::UTIL::enable_if;
+    using CYTL::UTIL::EmptyType;
 
     // ----------------------------
     // Basic Data Type
@@ -118,9 +119,41 @@ namespace TPL
     { typedef T2 value; };
 
 
-    //--------------------------------------
+    // --------------------------------------
+    // VarValList
+    struct EmptyVarValList;
+    template<class Varible, class Val, class Tail> struct VarValList;
+    template<class Varible, class Val>
+    struct VarValList<Varible, Val, EmptyVarValList>;
+
+    // VarValListExtend
+    template<class Varible, class Val, class L>
+    struct VarValListExtend
+    { typedef VarValList<Varible, Val, L> value; };
+
+    // VarValListLookup
+    template<class V, class L> struct VarValListLookup;
+    template<class V, class Varible, class Val, class Tail> // Search next Node
+    struct VarValListLookup< V, VarValList<Varible, Val, Tail> >
+    { typedef typename VarValListLookup<V, Tail>::value value; };
+    template<class V, class Val, class Tail> // V found
+    struct VarValListLookup< V, VarValList<V, Val, Tail> >
+    { typedef Val value; };
+    template<class V> // till the end, nothing is found
+    struct VarValListLookup<V, EmptyVarValList>
+    { typedef EmptyType value; };
+
+
+    // -------------------------------------------------
     // Env
-    
+    struct EmptyEnv;
+    template<class Head, class Tail> struct Env;
+    template<class T> struct Env<T, EmptyEnv>;
+
+    // EnvExtend
+    template<class Head, class E> 
+    struct EnvExtend
+    { typedef Env<Head, E> value; };
 }
 
 #endif //EVALUATOR_H_
