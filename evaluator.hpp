@@ -47,6 +47,13 @@ namespace TPL
     struct IsEqual< Int<N1>, Int<N2> >
     { typedef Bool<(N1==N2)> value; };
 
+    // IsUnit
+    template<class T> struct IsUnit
+    { typedef Bool<false> value; };;
+    template<>
+    struct IsUnit<Unit>
+    { typedef Bool<true> value; };
+
 
     // ------------------------------------
     // Pair
@@ -77,16 +84,16 @@ namespace TPL
     //IsList
     template<class T>
     struct IsList
-    { static const bool value = false; };
+    { typedef Bool<false> value; };
     template<class T1, class T2>
     struct IsList< Pair<T1, T2> >
-    { static const bool value = IsList<T2>::value; };
+    { typedef typename IsList<T2>::value value; };
     template<class T>
     struct IsList< Pair<T, Unit> >
-    { static const bool value = true; };
+    { typedef Bool<true> value; };
     template<>
     struct IsList<Unit>
-    { static const bool value = true; };
+    { typedef Bool<true> value; };
 
     // List.N
     template<class T, class N> struct ListRef;
@@ -96,7 +103,10 @@ namespace TPL
     template<class T1, class T2>
     struct ListRef< Pair<T1, T2>, Int<0> >
     {
-        typedef typename enable_if<IsList<T2>::value, T2>::type islist;
+        typedef typename enable_if< IsEQ< typename IsList<T2>::value,
+                                          Bool<true> >::value, 
+                                    T2 >::type 
+                         ISLIST;
         typedef T1 value;
     };
 

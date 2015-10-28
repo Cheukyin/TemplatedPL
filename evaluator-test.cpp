@@ -22,6 +22,9 @@ int main()
     StaticCheckEQ< IsLess< Int<5>, Int<8> >::value, Bool<true> >();
     StaticCheckEQ< IsEqual< Int<8>, Int<8> >::value, Bool<true> >();
 
+    StaticCheckEQ< IsUnit<Unit>::value, Bool<true> >();
+    StaticCheckEQ < IsUnit< List< Int<9>, Int<2> >::value >::value, Bool<false> >();
+
 
     // -------------------------------------------------------
     // Pair Testing
@@ -48,10 +51,11 @@ int main()
     StaticCheckEQ<L1, P1>();
 
     // IsList
-    ComileTimeCheck< IsList<L1>::value >();    
-    ComileTimeCheck< IsList<P1>::value >();
-    ComileTimeCheck< IsList<Unit>::value >();
-    ComileTimeCheck< IsList< Snd<Snd<P1>::value>::value >::value >();
+    StaticCheckEQ< IsList<L1>::value, Bool<true> >();
+    StaticCheckEQ< IsList<P1>::value, Bool<true> >();
+    StaticCheckEQ< IsList<Unit>::value, Bool<true> >();
+    StaticCheckEQ< IsList< Snd<Snd<P1>::value>::value >::value, Bool<true> >();
+    StaticCheckEQ< IsList<P>::value, Bool<false> >();
     
     // List.N
     typedef List< Int<0>, Int<1>, Int<2>, Int<3>, Int<4> >::value L3;
