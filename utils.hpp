@@ -29,6 +29,16 @@ namespace CYTL
         { static const bool value = true; };
 
 
+        // ------------------------------------------
+        // NotEQ
+        template<class T1, class T2> 
+        struct NotEQ
+        { static const bool value = true; };
+        template<class T> 
+        struct NotEQ<T, T>
+        { static const bool value = false; };
+
+
         // -----------------------------------------
         // Int2Type
         template<int N> 
