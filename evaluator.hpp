@@ -7,6 +7,8 @@ namespace TPL
 {
     using CYTL::UTIL::enable_if;
     using CYTL::UTIL::EmptyType;
+    using CYTL::UTIL::Select;
+    using CYTL::UTIL::IsEQ;
 
     // ----------------------------
     // Basic Data Type
@@ -154,6 +156,21 @@ namespace TPL
     template<class Head, class E> 
     struct EnvExtend
     { typedef Env<Head, E> value; };
+
+    // EnvLookup
+    template<class V, class E> struct EnvLookup;
+    template<class V, class L, class ETail>
+    struct EnvLookup< V, Env<L, ETail> >
+    {
+        typedef typename VarValListLookup<V, L>::value ResultType;
+        typedef typename Select< IsEQ<ResultType, EmptyType>::value,
+                                 typename EnvLookup<V, ETail>::value,
+                                 ResultType >::value
+                         value;
+    };
+    template<class V> // till the end, nothing is found
+    struct EnvLookup<V, EmptyEnv>
+    { typedef EmptyType value; };
 }
 
 #endif //EVALUATOR_H_

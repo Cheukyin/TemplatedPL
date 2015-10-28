@@ -23,17 +23,17 @@ namespace CYTL
         // IsEQ
         template<class T1, class T2> 
         struct IsEQ
-        { const bool Result = false; };
+        { static const bool value = false; };
         template<class T> 
         struct IsEQ<T, T>
-        { const bool Result = true; };
+        { static const bool value = true; };
 
 
         // -----------------------------------------
         // Int2Type
         template<int N> 
         struct Int2Type
-        { const int v = N; };
+        { static const int v = N; };
 
 
         // ------------------------------------
