@@ -8,39 +8,39 @@ namespace TPL
 {
     // Eval
     using internal::Eval;          // Eval<Exp>
-                                   
-    // Basic Data Type             
+
+    // Basic Data Type
     using internal::Int;           // Int<N>
     using internal::Bool;          // Bool<N>
     using internal::Var;           // Var<N>
     using internal::Unit;          // Unit
-                                   
-    // Add                         
+
+    // Add
     using internal::Add;           // Add<E1, E2>
     // Mul
     using internal::Mul;           // Mul<E1, E2>
-                                   
-    // >                           
+
+    // >
     using internal::IsGreater;     // IsGreater<E1, E2>
-    // <                           
+    // <
     using internal::IsLess;        // IsLess<E1, E2>
-    // ==                          
+    // ==
     using internal::IsEqual;       // IsEqual<E1, E2>
-    // IsUnit                      
+    // IsUnit
     using internal::IsUnit;        // IsUnit<E>
-                                   
-    // Pair type                   
+
+    // Pair type
     using internal::Pair;          // Pair<E1, E2>
-    // Pair.1                      
+    // Pair.1
     using internal::Fst;           // Fst<P>
-    // Pair.2                      
+    // Pair.2
     using internal::Snd;           // Snd<P>
-                                   
-    // List type                   
+
+    // List type
     using internal::List;          // List<E, ERest...>
-    //IsList                       
+    //IsList
     using internal::IsList;        // IsList<E>
-    // List.N                      
+    // List.N
     using internal::ListRef;       // ListRef<L, N>
     // ListAppend
     using internal::ListAppend;    // ListAppend<L, E>

@@ -22,9 +22,9 @@ int main()
     // -------------------------------------------------------
     // Basic Type Testing
 
-    StaticCheckEQ< Eval< Int<4> >, Int<4> >;
-    StaticCheckEQ< Eval< Bool<true> >, Bool<true> >;
-    StaticCheckEQ< Eval< Unit >, Unit >;
+    StaticCheckEQ< Eval< Int<4> >::value, Int<4> >();
+    StaticCheckEQ< Eval< Bool<true> >::value, Bool<true> >();
+    StaticCheckEQ< Eval< Unit >::value, Unit >();
 
 
     // -------------------------------------------------------
@@ -66,11 +66,11 @@ int main()
     // -------------------------------------------------------
     // List Testing
 
-    typedef List< List< Int<2>, Bool<false> >, 
-                  List< Int<4>, Bool<true> >, 
+    typedef List< List< Int<2>, Bool<false> >,
+                  List< Int<4>, Bool<true> >,
                   List< Int<6> > >
             L1;
-    typedef Pair< Pair< Int<2>, Pair<Bool<false>, Unit> >, 
+    typedef Pair< Pair< Int<2>, Pair<Bool<false>, Unit> >,
                   Pair< Pair< Int<4>, Pair<Bool<true>, Unit> >,
                         Pair< Pair<Int<6>, Unit>,
                               Unit > > >
@@ -88,15 +88,15 @@ int main()
     //// List.N
     typedef List< Int<0>, Int<1>, Int<2>, Int<3>, Int<4> > L3;
     StaticCheckEQ< Eval< ListRef< L3, Add< Int<2>, Int<0> > > >::value, Int<2> >();
-    StaticCheckEQ< Eval< ListRef< ListRef< L1, Add< Int<0>, Int<0> > >, 
-                                  Add< Int<-2>, Int<2> > > >::value, 
-                   Int<2> >(); 
+    StaticCheckEQ< Eval< ListRef< ListRef< L1, Add< Int<0>, Int<0> > >,
+                                  Add< Int<-2>, Int<2> > > >::value,
+                   Int<2> >();
 
     // ListAppend
     typedef List< Int<0>, Int<1>, Int<2>, Int<3>, Int<4>, Int<5> > L4;
     StaticCheckEQ< Eval< ListAppend< L3, Int<5> > >::value, Eval<L4>::value >();
-    StaticCheckEQ< Eval< ListAppend< ListAppend< L3, Add< Int<1>, Int<4> > >, 
-                                     List< Int<9> > > >::value, 
+    StaticCheckEQ< Eval< ListAppend< ListAppend< L3, Add< Int<1>, Int<4> > >,
+                                     List< Int<9> > > >::value,
                    Eval< ListAppend< L4, List< Int<9> > > >::value >();
 
 
@@ -119,14 +119,14 @@ int main()
     typedef VarValList< Var<0>, Int<0>,
                         VarValList< Var<1>, Int<1>, EmptyVarValList > >
             VarValL0;
-    typedef VarValList< Var<2>, Int<2>, 
+    typedef VarValList< Var<2>, Int<2>,
                         VarValList< Var<0>, Int<0>,
-                                    VarValList< Var<1>, Int<1>, 
+                                    VarValList< Var<1>, Int<1>,
                                                 EmptyVarValList > > >
             VarValL1;
     // VarValListExtend
     StaticCheckEQ< VarValListExtend< Var<2>, Int<2>, VarValL0 >::value,
-                   VarValL1 >;
+                   VarValL1 >();
 
     // VarValListLookup
     StaticCheckEQ< VarValListLookup<Var<2>, VarValL1>::value, Int<2> >();
@@ -150,7 +150,7 @@ int main()
     typedef Env< VarValL2,
                  Env< VarValL3, EmptyEnv > >
             E0;
-    typedef Env< VarValL0, 
+    typedef Env< VarValL0,
                  Env< VarValL1,
                       Env< VarValL2,
                            Env< VarValL3, EmptyEnv > > > >
@@ -206,7 +206,7 @@ int main()
                                                                    Add< Var<0>, Var<1> > >,
                                                            Int<3> > >,
                                              Var<0> > >,
-                                Int<7> > >::value, 
+                                Int<7> > >::value,
                    Int<10> >();
 
     // syntatic closure
@@ -229,7 +229,7 @@ int main()
             F;
     // maybe the recursion is too deep for the compiler to calculate F(n) where n >= 1 ???????
     StaticCheckEQ< Eval< Call< Call<F, F>,
-                               Int<0> > >::value,
+                               Int<1> > >::value,
                    Int<1> >();
 
     return 0;

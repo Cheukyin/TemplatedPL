@@ -21,27 +21,27 @@ namespace CYTL
 
         // -----------------------------------------
         // IsEQ
-        template<class T1, class T2> 
+        template<class T1, class T2>
         struct IsEQ
         { static const bool value = false; };
-        template<class T> 
+        template<class T>
         struct IsEQ<T, T>
         { static const bool value = true; };
 
 
         // ------------------------------------------
         // NotEQ
-        template<class T1, class T2> 
+        template<class T1, class T2>
         struct NotEQ
         { static const bool value = true; };
-        template<class T> 
+        template<class T>
         struct NotEQ<T, T>
         { static const bool value = false; };
 
 
         // -----------------------------------------
         // Int2Type
-        template<int N> 
+        template<int N>
         struct Int2Type
         { static const int v = N; };
 

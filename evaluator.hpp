@@ -71,8 +71,8 @@ namespace TPL
         //------------------------------------------------
         // Eval
         template<class Exp, class Environ> struct EvalUnderEnv;
-        
-        template<class Exp> 
+
+        template<class Exp>
         struct Eval
         { typedef typename EvalUnderEnv<Exp, EmptyEnv>::value value; };
 
@@ -216,7 +216,7 @@ namespace TPL
             typedef typename EvalUnderEnv<T2, Environ>::value T2Val;
             typedef Pair<T1Val, T2Val> value;
         };
-    
+
         // Pair.1
         template<class T>struct Fst;
 
@@ -266,7 +266,7 @@ namespace TPL
 
 
         //IsList
-        template<class T> 
+        template<class T>
         struct IsList
         { static const bool MayBeList = false; };
         template<class T1, class T2> //
@@ -301,10 +301,10 @@ namespace TPL
         template<class Environ> //
         struct EvalUnderEnv< IsList< EmptyType >, Environ >
         { typedef Bool<false> value; };
-    
+
 
         // List.N
-        template<class T, class N> 
+        template<class T, class N>
         struct ListRef
         { static const bool MayBeList = false; };
         template<class T1, class T2, int N> //
@@ -343,7 +343,7 @@ namespace TPL
         template<class N, class Environ> //
         struct EvalUnderEnv< ListRef< EmptyType, N >, Environ >
         { typedef Bool<false> value; };
-    
+
 
         // ListAppend
         template<class L, class NewT> struct ListAppend;
@@ -358,12 +358,12 @@ namespace TPL
 
         template<class H, class T, class NewT, class Environ> //
         struct EvalUnderEnv< ListAppend<Pair<H, T>, NewT>, Environ >
-        { 
+        {
             typedef typename EvalUnderEnv<H, Environ>::value HVal;
             typedef typename EvalUnderEnv<T, Environ>::value TVal;
             typedef typename EvalUnderEnv<NewT, Environ>::value NewTVal;
-            typedef Pair< HVal, 
-                          typename EvalUnderEnv< ListAppend<TVal, NewTVal>, Environ >::value > 
+            typedef Pair< HVal,
+                          typename EvalUnderEnv< ListAppend<TVal, NewTVal>, Environ >::value >
                     value;
         };
 
@@ -373,8 +373,8 @@ namespace TPL
             typedef typename EvalUnderEnv<NewT, Environ>::value NewTVal;
             typedef Pair<NewTVal, Unit> value;
         };
-    
-    
+
+
 
         // ------------------------------------
         // If_Then_Else
@@ -389,7 +389,7 @@ namespace TPL
 
         template<class T1, class T2, class Environ> //
         struct EvalUnderEnv< If_Then_Else<Bool<true>, T1, T2>, Environ >
-        { 
+        {
             typedef typename EvalUnderEnv<T1, Environ>::value T1Val;
             typedef T1Val value;
         };
@@ -441,10 +441,10 @@ namespace TPL
         template<class VarValL, class Environ, class PL, class... Val> struct Binding;
 
         template<class VarValL, class Environ, //
-                 int N, class... ParamRest, 
+                 int N, class... ParamRest,
                  class Val, class... ValRest>
-        struct Binding< VarValL, Environ, 
-                        ParamList< Var<N>, ParamRest... >, 
+        struct Binding< VarValL, Environ,
+                        ParamList< Var<N>, ParamRest... >,
                         Val, ValRest... >
         {
             typedef typename EvalUnderEnv<Val, Environ>::value TVal;
@@ -457,12 +457,12 @@ namespace TPL
                                      EmptyType,
                                      ParamList<ParamRest...> >::value
                                      TmpParam;
-        
+
             typedef typename Binding< ExtVarValL, Environ, TmpParam, ValRest... >::value value;
         };
         template<class VarValL, class Environ, class... ValRest> //
         struct Binding< VarValL, Environ, EmptyType, ValRest... >
-        { typedef typename VarValL value; };
+        { typedef VarValL value; };
 
 
         // Call
@@ -476,10 +476,10 @@ namespace TPL
         };
 
         template<class Param, class... ParamRest, class Body, //
-                 class Val, class... ValRest, 
+                 class Val, class... ValRest,
                  class Environ>
-        struct EvalUnderEnv< Call< Lambda< ParamList<Param, ParamRest...>, Body >, 
-                                   Val, ValRest...>, 
+        struct EvalUnderEnv< Call< Lambda< ParamList<Param, ParamRest...>, Body >,
+                                   Val, ValRest...>,
                              Environ >
         {
             typedef typename Binding< EmptyVarValList, Environ,
