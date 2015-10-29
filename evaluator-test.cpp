@@ -35,6 +35,13 @@ int main()
 
 
     // -------------------------------------------------------
+    // Mul Testing
+
+    StaticCheckEQ< Eval< Mul< Mul< Int<1>, Int<3> >, Int<4> > >::value, Int<12> >();
+    StaticCheckEQ< Eval< Mul< Int<-9>, Int<6> > >::value, Int<-54> >();
+
+
+    // -------------------------------------------------------
     // Comparing Testing
 
     StaticCheckEQ< Eval< IsGreater< Add< Int<1>, Int<4> >, Int<8> > >::value, Bool<false> >();

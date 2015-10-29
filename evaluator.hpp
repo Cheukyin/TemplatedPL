@@ -114,7 +114,25 @@ namespace TPL
         {
             typedef typename EvalUnderEnv<T1, Environ>::value T1Val;
             typedef typename EvalUnderEnv<T2, Environ>::value T2Val;
-            typedef typename EvalUnderEnv<Add<T1Val, T2Val>, Environ>::value value;
+            typedef typename EvalUnderEnv< Add<T1Val, T2Val>, Environ >::value value;
+        };
+
+
+
+        // -----------------------------
+        // Mul
+        template<class T1, class T2> struct Mul;
+
+        template<int N1, int N2, class Environ> //
+        struct EvalUnderEnv< Mul< Int<N1>, Int<N2> >, Environ >
+        { typedef Int<N1 * N2> value; };
+
+        template<class T1, class T2, class Environ> //
+        struct EvalUnderEnv< Mul<T1, T2>, Environ >
+        {
+            typedef typename EvalUnderEnv<T1, Environ>::value T1Val;
+            typedef typename EvalUnderEnv<T2, Environ>::value T2Val;
+            typedef typename EvalUnderEnv< Mul<T1Val, T2Val>, Environ >::value value;
         };
 
 
