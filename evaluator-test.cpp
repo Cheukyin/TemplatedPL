@@ -148,5 +148,34 @@ int main()
             Plus;
     StaticCheckEQ< Eval<Plus>::value, Closure<EmptyEnv, Plus> >();
 
+
+    // --------------------------------------------------------
+    // Apply
+
+    // Binding
+    StaticCheckEQ< Binding< VarValL0, EmptyEnv, ParamList< Var<2> >, Int<2> >::value,
+                   VarValL1 >();
+    StaticCheckEQ< Binding< EmptyVarValList, EmptyEnv,
+                            ParamList< Var<0>, Var<1> >, Int<0>, Int<1> >::value,
+                   VarValList< Var<1>, Int<1>,
+                               VarValList< Var<0>, Int<0>, EmptyVarValList > > >();
+
+    // Call
+    StaticCheckEQ< Eval< Call< Plus, Int<2>, Int<1> > >::value,
+                   Int<3> >();
+    StaticCheckEQ< Eval< Call< Lambda< ParamList< Var<0> >, Var<0> >,
+                               Int<1> > >::value,
+                   Int<1> >();
+
+    // lexcal binding, ¦Ëy.(¦Ëx.(¦Ëy.x+y 3) y) 7
+    StaticCheckEQ< Eval< Call< Lambda< ParamList< Var<0> >,
+                                       Call< Lambda< ParamList< Var<1> >,
+                                                     Call< Lambda< ParamList< Var<0> >,
+                                                                   Add< Var<0>, Var<1> > >,
+                                                           Int<3> > >,
+                                             Var<0> > >,
+                                Int<7> > >::value, 
+                   Int<10> >();
+
     return 0;
 }

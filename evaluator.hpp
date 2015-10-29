@@ -345,7 +345,7 @@ namespace TPL
     
 
     // ------------------------------------
-    // if-then-else
+    // If_Then_Else
     template<class Cond, class T1, class T2> struct If_Then_Else;
 
     template<class Cond, class T1, class T2, class Environ> //
@@ -377,13 +377,7 @@ namespace TPL
 
     template<class Param, class... ParamTail, class Environ> //
     struct EvalUnderEnv< ParamList< Param, ParamTail... >, Environ >
-    {
-        typedef typename EvalUnderEnv<Param, Environ>::value PVal;
-        typedef typename ParamList < PVal, 
-                                     typename EvalUnderEnv< ParamList<ParamTail...>, 
-                                                            Environ > >::value 
-                value;
-    };
+    { typedef ParamList< Param, ParamTail... > value; };
 
 
     // Closure
@@ -402,6 +396,58 @@ namespace TPL
     {
         typedef ParamList< Param, ParamTail... > PVal;
         typedef Closure< Environ, Lambda<PVal, Body> > value;
+    };
+
+
+
+    // ------------------------------------------------------------
+    // Apply
+
+    // Binding
+    template<class VarValL, class Environ, class PL, class... Val> struct Binding;
+
+    template<class VarValL, class Environ, //
+             int N, class... ParamRest, 
+             class Val, class... ValRest>
+    struct Binding< VarValL, Environ, 
+                    ParamList< Var<N>, ParamRest... >, 
+                    Val, ValRest... >
+    {
+        typedef typename EvalUnderEnv<Val, Environ>::value TVal;
+        typedef typename VarValListExtend< Var<N>, TVal, VarValL >::value ExtVarValL;
+
+        static const int ParamNum = sizeof...(ParamRest)+1;
+        static const int ValNum = sizeof...(ValRest)+1;
+
+        typedef typename Select< ParamNum ==1 && ValNum == 1,
+                                 EmptyType,
+                                 ParamList<ParamRest...> >::value
+                                 TmpParam;
+        
+        typedef typename Binding< ExtVarValL, Environ, TmpParam, ValRest... >::value value;
+    };
+    template<class VarValL, class Environ, class... ValRest> //
+    struct Binding< VarValL, Environ, EmptyType, ValRest... >
+    { typedef typename VarValL value; };
+
+
+    // Call
+    template<class Fn, class... Val> struct Call;
+
+    template<class Param, class... ParamRest, class Body, //
+             class Val, class... ValRest, 
+             class Environ>
+    struct EvalUnderEnv< Call< Lambda< ParamList<Param, ParamRest...>, Body >, 
+                               Val, ValRest...>, 
+                         Environ >
+    {
+        typedef typename Binding< EmptyVarValList, Environ,
+                                  ParamList<Param, ParamRest...>,
+                                  Val, ValRest... >::value
+                ExtVarValL;
+        typedef typename EnvExtend< ExtVarValL, Environ >::value ExtEnv;
+
+        typedef typename EvalUnderEnv<Body, ExtEnv>::value value;
     };
 }
 
