@@ -3,6 +3,7 @@
 #ifndef EVALUATOR_H_
 #define EVALUATOR_H_
 
+// Evaluator
 namespace TPL
 {
     namespace internal
@@ -467,6 +468,13 @@ namespace TPL
         // Call
         template<class Fn, class... Val> struct Call;
 
+        template<class T, class Val, class... ValRest, class Environ> //
+        struct EvalUnderEnv< Call< T, Val, ValRest... >, Environ >
+        {
+            typedef typename EvalUnderEnv< T, Environ >::value TVal;
+            typedef typename EvalUnderEnv< Call<TVal, Val, ValRest...>, Environ >::value value;
+        };
+
         template<class Param, class... ParamRest, class Body, //
                  class Val, class... ValRest, 
                  class Environ>
@@ -482,7 +490,15 @@ namespace TPL
 
             typedef typename EvalUnderEnv<Body, ExtEnv>::value value;
         };
-    }
-}
+
+        template<class E, class Lamb, class Val, class... ValRest, class Environ> //
+        struct EvalUnderEnv< Call< Closure<E, Lamb>,
+                                   Val, ValRest... >,
+                             Environ >
+        { typedef typename EvalUnderEnv< Call<Lamb, Val, ValRest...>, E >::value value; };
+
+    } // namespace internal
+
+} // namespace TPL
 
 #endif //EVALUATOR_H_

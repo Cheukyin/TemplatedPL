@@ -192,8 +192,14 @@ int main()
     StaticCheckEQ< Eval< Call< Lambda< ParamList< Var<0> >, Var<0> >,
                                Int<1> > >::value,
                    Int<1> >();
+    StaticCheckEQ< Eval< Call< If_Then_Else< Bool<true>,
+                                             Plus,
+                                             Int<1> >,
+                               Int<2>, Int<1> > >::value,
+                   Int<3> >();
 
-    // lexcal binding, ¦Ëy.(¦Ëx.(¦Ëy.x+y 3) y) 7
+
+    // lexcal binding, lambda y.(lambda x.(lambda y.x+y 3) y) 7
     StaticCheckEQ< Eval< Call< Lambda< ParamList< Var<0> >,
                                        Call< Lambda< ParamList< Var<1> >,
                                                      Call< Lambda< ParamList< Var<0> >,
@@ -202,6 +208,29 @@ int main()
                                              Var<0> > >,
                                 Int<7> > >::value, 
                    Int<10> >();
+
+    // syntatic closure
+    StaticCheckEQ< Eval< Call< Call< Lambda< ParamList< Var<0> >,
+                                             Lambda< ParamList< Var<1> >,
+                                                     Add< Var<0>, Var<1> > > >,
+                                     Int<3> >,
+                               Int<4> > >::value,
+                    Int<7> >();
+
+
+    // recursion, Factorial, F = lambda f. lambda n. n==0 ? 1 : n*( (f f) (n-1) )
+    typedef Lambda< ParamList< Var<1> >,
+                    Lambda< ParamList< Var<0> >,
+                            If_Then_Else< IsEqual< Var<0>, Int<0> >,
+                                          Int<1>,
+                                          Mul< Var<0>,
+                                               Call< Call< Var<1>, Var<1> >,
+                                                     Add< Var<0>, Int<-1> > > > > > >
+            F;
+    // maybe the recursion is too deep for the compiler to calculate F(n) where n >= 1 ???????
+    StaticCheckEQ< Eval< Call< Call<F, F>,
+                               Int<0> > >::value,
+                   Int<1> >();
 
     return 0;
 }

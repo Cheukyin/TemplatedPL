@@ -56,6 +56,7 @@ namespace TPL
 
     // Call
     using internal::Call;          // Call< Func, Val0, ValRest... >
-}
+
+} // namespace TPL
 
 #endif //EXPRESSION_H_
