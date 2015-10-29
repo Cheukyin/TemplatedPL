@@ -1,40 +1,54 @@
-#include "evaluator.hpp"
+#include "expression.hpp"
 #include "utils.hpp"
 
-
 using namespace TPL;
-using namespace CYTL;
-using UTIL::StaticCheckEQ;
-using UTIL::ComileTimeCheck;
+using CYTL::UTIL::StaticCheckEQ;
+using CYTL::UTIL::ComileTimeCheck;
+using CYTL::UTIL::EmptyType;
 
+using internal::VarValList;
+using internal::EmptyVarValList;
+using internal::VarValListExtend;
+using internal::VarValListLookup;
+using internal::Binding;
+using internal::Env;
+using internal::EmptyEnv;
+using internal::EnvExtend;
+using internal::EnvLookup;
+using internal::Closure;
 
 int main()
 {
     // -------------------------------------------------------
     // Basic Type Testing
+
     StaticCheckEQ< Eval< Int<4> >, Int<4> >;
     StaticCheckEQ< Eval< Bool<true> >, Bool<true> >;
     StaticCheckEQ< Eval< Unit >, Unit >;
 
+
     // -------------------------------------------------------
     // Add Testing
+
     StaticCheckEQ< Eval< Add< Add< Int<1>, Int<3> >, Int<4> > >::value, Int<8> >();
     StaticCheckEQ< Eval< Add< Int<-9>, Int<45> > >::value, Int<36> >();
 
 
     // -------------------------------------------------------
     // Comparing Testing
+
     StaticCheckEQ< Eval< IsGreater< Add< Int<1>, Int<4> >, Int<8> > >::value, Bool<false> >();
     StaticCheckEQ< Eval< IsLess< Add< Int<1>, Int<4> >, Int<8> > >::value, Bool<true> >();
     StaticCheckEQ< Eval< IsEqual< Add< Int<4>, Int<4> >, Int<8> > >::value, Bool<true> >();
 
     StaticCheckEQ< Eval< IsUnit<Unit> >::value, Bool<true> >();
     StaticCheckEQ< Eval< IsUnit< Add< Int<2>, Int<2> > > >::value, Bool<false> >();
-    //StaticCheckEQ< Eval< IsUnit< List< Int<9>, Int<2> >::value > >::value, Bool<false> >();
+    StaticCheckEQ< Eval< IsUnit< List< Int<9>, Int<2> > > >::value, Bool<false> >();
 
 
     // -------------------------------------------------------
     // Pair Testing
+
     typedef Pair< Pair< Int<4>, Bool<true> >, Pair< Pair<Int<2>, Unit>, Bool<false> > > P;
     StaticCheckEQ< Eval<P>::value, P >();
     StaticCheckEQ< Eval< Fst< Fst<P> > >::value, Int<4> >();
@@ -44,6 +58,7 @@ int main()
 
     // -------------------------------------------------------
     // List Testing
+
     typedef List< List< Int<2>, Bool<false> >, 
                   List< Int<4>, Bool<true> >, 
                   List< Int<6> > >
@@ -80,6 +95,7 @@ int main()
 
     // -------------------------------------------------------
     // if-then-else Testing
+
     StaticCheckEQ< Eval< If_Then_Else< IsGreater< Int<5>, Int<8> >,
                                        L1,
                                        P > >::value,
@@ -92,6 +108,7 @@ int main()
 
     // -----------------------------------------------------
     // VarValList
+
     typedef VarValList< Var<0>, Int<0>,
                         VarValList< Var<1>, Int<1>, EmptyVarValList > >
             VarValL0;
@@ -108,11 +125,12 @@ int main()
     StaticCheckEQ< VarValListLookup<Var<2>, VarValL1>::value, Int<2> >();
     StaticCheckEQ< VarValListLookup<Var<0>, VarValL1>::value, Int<0> >();
     StaticCheckEQ< VarValListLookup<Var<1>, VarValL1>::value, Int<1> >();
-    StaticCheckEQ< VarValListLookup<Var<3>, VarValL1>::value, UTIL::EmptyType >();
+    StaticCheckEQ< VarValListLookup<Var<3>, VarValL1>::value, EmptyType >();
 
 
     // -----------------------------------------------------
     // Env
+
     typedef VarValList< Var<8>, Int<8>,
                         VarValList< Var<9>, Int<9>, EmptyVarValList > >
             VarValL2;
@@ -130,12 +148,13 @@ int main()
                       Env< VarValL2,
                            Env< VarValL3, EmptyEnv > > > >
             E1;
+
     // EnvExtend
     StaticCheckEQ< EnvExtend<VarValL0, EnvExtend<VarValL1, E0>::value>::value, E1 >();
 
     // EnvLookup
     StaticCheckEQ< EnvLookup<Var<0>, E1>::value, Int<0> >();
-    StaticCheckEQ< EnvLookup<Var<0>, E0>::value, UTIL::EmptyType >();
+    StaticCheckEQ< EnvLookup<Var<0>, E0>::value, EmptyType >();
     StaticCheckEQ< EnvLookup<Var<8>, E1>::value, Int<8> >();
     StaticCheckEQ< EnvLookup<Var<7>, E1>::value, Int<7> >();
     StaticCheckEQ< EnvLookup<Var<6>, E0>::value, Int<6> >();
