@@ -14,7 +14,6 @@ int main()
     // Basic Type Testing
     StaticCheckEQ< Eval< Int<4> >, Int<4> >;
     StaticCheckEQ< Eval< Bool<true> >, Bool<true> >;
-    StaticCheckEQ< Eval< Var<4> >, Var<4> >;
     StaticCheckEQ< Eval< Unit >, Unit >;
 
     // -------------------------------------------------------
@@ -140,6 +139,14 @@ int main()
     StaticCheckEQ< EnvLookup<Var<8>, E1>::value, Int<8> >();
     StaticCheckEQ< EnvLookup<Var<7>, E1>::value, Int<7> >();
     StaticCheckEQ< EnvLookup<Var<6>, E0>::value, Int<6> >();
+
+
+    // ----------------------------------------------------------
+    // Lambda
+    typedef Lambda< ParamList< Var<0>, Var<1> >,
+                    Add< Var<0>, Var<1> > >
+            Plus;
+    StaticCheckEQ< Eval<Plus>::value, Closure<EmptyEnv, Plus> >();
 
     return 0;
 }

@@ -90,7 +90,7 @@ namespace TPL
     { typedef Bool<B> value; };
     template<int N, class Environ> //
     struct EvalUnderEnv< Var<N>, Environ >
-    { typedef Var<N> value; };
+    { typedef typename EnvLookup< Var<N>, Environ >::value value; };
     template<class Environ> //
     struct EvalUnderEnv< Unit, Environ >
     { typedef Unit value; };
@@ -365,6 +365,43 @@ namespace TPL
     {
         typedef typename EvalUnderEnv<T2, Environ>::value T2Val;
         typedef T2Val value;
+    };
+
+
+
+    // ---------------------------------------------
+    // Lambda
+
+    // ParamList
+    template<class... Param> struct ParamList;
+
+    template<class Param, class... ParamTail, class Environ> //
+    struct EvalUnderEnv< ParamList< Param, ParamTail... >, Environ >
+    {
+        typedef typename EvalUnderEnv<Param, Environ>::value PVal;
+        typedef typename ParamList < PVal, 
+                                     typename EvalUnderEnv< ParamList<ParamTail...>, 
+                                                            Environ > >::value 
+                value;
+    };
+
+
+    // Closure
+    template<class Environ, class Fn> struct Closure;
+
+    template<class E, class Fn, class Environ> //
+    struct EvalUnderEnv< Closure<E, Fn>, Environ >
+    { typedef Closure<E, Fn> value; };
+
+
+    // Lambda
+    template<class ParamL, class Body> struct Lambda;
+
+    template<class Param, class... ParamTail, class Body, class Environ> //
+    struct EvalUnderEnv< Lambda< ParamList< Param, ParamTail... >, Body >, Environ >
+    {
+        typedef ParamList< Param, ParamTail... > PVal;
+        typedef Closure< Environ, Lambda<PVal, Body> > value;
     };
 }
 
