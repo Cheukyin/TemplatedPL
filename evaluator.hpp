@@ -50,7 +50,8 @@ namespace TPL
 
     // EnvLookup
     template<class V, class E> struct EnvLookup;
-    template<class V, class L, class ETail>
+
+    template<class V, class L, class ETail> //
     struct EnvLookup< V, Env<L, ETail> >
     {
         typedef typename VarValListLookup<V, L>::value ResultType;
@@ -81,16 +82,16 @@ namespace TPL
     template<int N> struct Var;
     struct Unit;
 
-    template<int N, class Environ>
+    template<int N, class Environ> //
     struct EvalUnderEnv< Int<N>, Environ >
     { typedef Int<N> value; };
-    template<bool B, class Environ>
+    template<bool B, class Environ> //
     struct EvalUnderEnv< Bool<B>, Environ >
     { typedef Bool<B> value; };
-    template<int N, class Environ>
+    template<int N, class Environ> //
     struct EvalUnderEnv< Var<N>, Environ >
     { typedef Var<N> value; };
-    template<class Environ>
+    template<class Environ> //
     struct EvalUnderEnv< Unit, Environ >
     { typedef Unit value; };
 
@@ -100,10 +101,10 @@ namespace TPL
     // Add
     template<class T1, class T2> struct Add;
 
-    template<int N1, int N2, class Environ>
+    template<int N1, int N2, class Environ> //
     struct EvalUnderEnv< Add< Int<N1>, Int<N2> >, Environ >
     { typedef Int<N1+N2> value; };
-    template<class T1, class T2, class Environ>
+    template<class T1, class T2, class Environ> //
     struct EvalUnderEnv< Add<T1, T2>, Environ >
     {
         typedef typename EvalUnderEnv<T1, Environ>::value T1Val;
@@ -119,10 +120,10 @@ namespace TPL
     // >
     template<class T1, class T2> struct IsGreater;
 
-    template<int N1, int N2, class Environ>
+    template<int N1, int N2, class Environ> //
     struct EvalUnderEnv< IsGreater< Int<N1>, Int<N2> >, Environ >
     { typedef Bool<(N1>N2)> value; };
-    template<class T1, class T2, class Environ>
+    template<class T1, class T2, class Environ> //
     struct EvalUnderEnv< IsGreater<T1, T2>, Environ >
     {
         typedef typename EvalUnderEnv<T1, Environ>::value T1Val;
@@ -133,10 +134,10 @@ namespace TPL
     // <
     template<class T1, class T2> struct IsLess;
 
-    template<int N1, int N2, class Environ>
+    template<int N1, int N2, class Environ> //
     struct EvalUnderEnv< IsLess< Int<N1>, Int<N2> >, Environ >
     { typedef Bool<(N1<N2)> value; };
-    template<class T1, class T2, class Environ>
+    template<class T1, class T2, class Environ> //
     struct EvalUnderEnv< IsLess<T1, T2>, Environ >
     {
         typedef typename EvalUnderEnv<T1, Environ>::value T1Val;
@@ -147,10 +148,10 @@ namespace TPL
     // ==
     template<class T1, class T2> struct IsEqual;
 
-    template<int N1, int N2, class Environ>
+    template<int N1, int N2, class Environ> //
     struct EvalUnderEnv< IsEqual< Int<N1>, Int<N2> >, Environ >
     { typedef Bool<(N1==N2)> value; };
-    template<class T1, class T2, class Environ>
+    template<class T1, class T2, class Environ> //
     struct EvalUnderEnv< IsEqual<T1, T2>, Environ >
     {
         typedef typename EvalUnderEnv<T1, Environ>::value T1Val;
@@ -161,10 +162,10 @@ namespace TPL
     // IsUnit
     template<class T> struct IsUnit;
 
-    template<class Environ>
+    template<class Environ> //
     struct EvalUnderEnv< IsUnit<Unit>, Environ >
     { typedef Bool<true> value; };
-    template<class T, class Environ>
+    template<class T, class Environ> //
     struct EvalUnderEnv< IsUnit<T>, Environ >
     {
         typedef typename EvalUnderEnv<T, Environ>::value TVal;
@@ -180,7 +181,7 @@ namespace TPL
     // Pair type
     template<class T1, class T2> struct Pair;
 
-    template<class T1, class T2, class Environ>
+    template<class T1, class T2, class Environ> //
     struct EvalUnderEnv< Pair<T1, T2>, Environ >
     {
         typedef typename EvalUnderEnv<T1, Environ>::value T1Val;
@@ -191,10 +192,10 @@ namespace TPL
     // Pair.1
     template<class T>struct Fst;
 
-    template<class T1, class T2, class Environ>
+    template<class T1, class T2, class Environ> //
     struct EvalUnderEnv< Fst< Pair<T1, T2> >, Environ >
     { typedef T1 value; };
-    template<class T, class Environ>
+    template<class T, class Environ> //
     struct EvalUnderEnv< Fst<T>, Environ >
     {
         typedef typename EvalUnderEnv<T, Environ>::value TVal;
@@ -204,10 +205,10 @@ namespace TPL
     // Pair.2
     template<class T>struct Snd;
 
-    template<class T1, class T2, class Environ>
+    template<class T1, class T2, class Environ> //
     struct EvalUnderEnv< Snd< Pair<T1, T2> >, Environ >
     { typedef T2 value; };
-    template<class T, class Environ>
+    template<class T, class Environ> //
     struct EvalUnderEnv< Snd<T>, Environ >
     {
         typedef typename EvalUnderEnv<T, Environ>::value TVal;
@@ -220,7 +221,7 @@ namespace TPL
     // List type
     template<class... T_Rest> struct List;
 
-    template<class T, class... T_Rest, class Environ>
+    template<class T, class... T_Rest, class Environ> //
     struct EvalUnderEnv< List<T, T_Rest...>, Environ >
     {
         static const int ArgsNum = sizeof...(T_Rest) + 1;
@@ -235,17 +236,17 @@ namespace TPL
 
 
     //IsList
-    template<class T> 
+    template<class T>  //
     struct IsList
     { static const bool MayBeList = false; };
-    template<class T1, class T2> 
+    template<class T1, class T2> //
     struct IsList< Pair<T1, T2> >
     { static const bool MayBeList = true; };
-    template<> 
+    template<>  //
     struct IsList<Unit>
     { static const bool MayBeList = true; };
 
-    template<class T, class Environ>
+    template<class T, class Environ> //
     struct EvalUnderEnv< IsList<T>, Environ >
     {
         typedef typename EvalUnderEnv<T, Environ>::value TVal;
@@ -255,32 +256,32 @@ namespace TPL
                 TmpType;
         typedef typename EvalUnderEnv< IsList<TmpType>, Environ >::value value;
     };
-    template<class T1, class T2, class Environ>
+    template<class T1, class T2, class Environ> //
     struct EvalUnderEnv< IsList< Pair<T1, T2> >, Environ >
     {
         typedef typename EvalUnderEnv<T2, Environ>::value T2Val;
         typedef typename EvalUnderEnv< IsList<T2Val>, Environ >::value value;
     };
-    template<class T, class Environ>
+    template<class T, class Environ> //
     struct EvalUnderEnv< IsList< Pair<T, Unit> >, Environ >
     { typedef Bool<true> value; };
-    template<class Environ>
+    template<class Environ> //
     struct EvalUnderEnv< IsList<Unit>, Environ >
     { typedef Bool<true> value; };
-    template<class Environ>
+    template<class Environ> //
     struct EvalUnderEnv< IsList< EmptyType >, Environ >
     { typedef Bool<false> value; };
     
 
     // List.N
-    template<class T, class N> 
+    template<class T, class N> //
     struct ListRef
     { static const bool MayBeList = false; };
-    template<class T1, class T2, int N> 
+    template<class T1, class T2, int N> //
     struct ListRef< Pair<T1, T2>, Int<N> >
     { static const bool MayBeList = true; };
 
-    template<class T, class N, class Environ>
+    template<class T, class N, class Environ> //
     struct EvalUnderEnv< ListRef<T, N>, Environ >
     {
         typedef typename EvalUnderEnv<T, Environ>::value TVal;
@@ -292,13 +293,13 @@ namespace TPL
                 TmpType;
         typedef typename EvalUnderEnv< ListRef<TmpType, Num>, Environ >::value value;
     };
-    template<class T1, class T2, int N, class Environ>
+    template<class T1, class T2, int N, class Environ> //
     struct EvalUnderEnv< ListRef< Pair<T1, T2>, Int<N> >, Environ >
     {
         typedef typename EvalUnderEnv<T2, Environ>::value T2Val;
         typedef typename EvalUnderEnv< ListRef< T2Val, Int<N - 1> >, Environ>::value value;
     };
-    template<class T1, class T2, class Environ>
+    template<class T1, class T2, class Environ> //
     struct EvalUnderEnv< ListRef< Pair<T1, T2>, Int<0> >, Environ >
     {
         typedef typename EvalUnderEnv< IsList<T2>, Environ>::value IsT2List;
@@ -309,7 +310,7 @@ namespace TPL
 
         typedef typename EvalUnderEnv<T1, Environ>::value value;
     };
-    template<class N, class Environ>
+    template<class N, class Environ> //
     struct EvalUnderEnv< ListRef< EmptyType, N >, Environ >
     { typedef Bool<false> value; };
     
@@ -317,14 +318,14 @@ namespace TPL
     // ListAppend
     template<class L, class NewT> struct ListAppend;
 
-    template<class T, class NewT, class Environ>
+    template<class T, class NewT, class Environ> //
     struct EvalUnderEnv< ListAppend<T, NewT>, Environ >
     {
         typedef typename EvalUnderEnv<T, Environ>::value TVal;
         typedef typename EvalUnderEnv<NewT, Environ>::value NewTVal;
         typedef typename EvalUnderEnv< ListAppend<TVal, NewTVal>, Environ >::value value;
     };
-    template<class H, class T, class NewT, class Environ>
+    template<class H, class T, class NewT, class Environ> //
     struct EvalUnderEnv< ListAppend<Pair<H, T>, NewT>, Environ >
     { 
         typedef typename EvalUnderEnv<H, Environ>::value HVal;
@@ -334,7 +335,7 @@ namespace TPL
                       typename EvalUnderEnv< ListAppend<TVal, NewTVal>, Environ >::value > 
                 value;
     };
-    template<class NewT, class Environ>
+    template<class NewT, class Environ> //
     struct EvalUnderEnv< ListAppend<Unit, NewT>, Environ >
     {
         typedef typename EvalUnderEnv<NewT, Environ>::value NewTVal;
@@ -347,19 +348,19 @@ namespace TPL
     // if-then-else
     template<class Cond, class T1, class T2> struct If_Then_Else;
 
-    template<class Cond, class T1, class T2, class Environ>
+    template<class Cond, class T1, class T2, class Environ> //
     struct EvalUnderEnv< If_Then_Else<Cond, T1, T2>, Environ >
     {
         typedef typename EvalUnderEnv<Cond, Environ>::value CondVal;
         typedef typename EvalUnderEnv< If_Then_Else<CondVal, T1, T2>, Environ >::value value;
     };
-    template<class T1, class T2, class Environ>
+    template<class T1, class T2, class Environ> //
     struct EvalUnderEnv< If_Then_Else<Bool<true>, T1, T2>, Environ >
     { 
         typedef typename EvalUnderEnv<T1, Environ>::value T1Val;
         typedef T1Val value;
     };
-    template<class T1, class T2, class Environ>
+    template<class T1, class T2, class Environ> //
     struct EvalUnderEnv< If_Then_Else<Bool<false>, T1, T2>, Environ >
     {
         typedef typename EvalUnderEnv<T2, Environ>::value T2Val;
