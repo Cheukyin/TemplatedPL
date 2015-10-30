@@ -336,7 +336,7 @@ namespace TPL
             typedef typename enable_if< IsEQ< IsT2List,
                                               Bool<true> >::value,
                                         IsT2List >::type
-                             ISLIST;
+                    ISLIST;
 
             typedef typename EvalUnderEnv<T1, Environ>::value value;
         };
@@ -456,7 +456,7 @@ namespace TPL
             typedef typename Select< ParamNum ==1 && ValNum == 1,
                                      EmptyType,
                                      ParamList<ParamRest...> >::value
-                                     TmpParam;
+                    TmpParam;
 
             typedef typename Binding< ExtVarValL, Environ, TmpParam, ValRest... >::value value;
         };
@@ -475,27 +475,23 @@ namespace TPL
             typedef typename EvalUnderEnv< Call<TVal, Val, ValRest...>, Environ >::value value;
         };
 
-        template<class Param, class... ParamRest, class Body, //
+        template<class E, //
+                 class Param, class... ParamRest, class Body,
                  class Val, class... ValRest,
                  class Environ>
-        struct EvalUnderEnv< Call< Lambda< ParamList<Param, ParamRest...>, Body >,
-                                   Val, ValRest...>,
+        struct EvalUnderEnv< Call< Closure< E,
+                                            Lambda< ParamList<Param, ParamRest...>, Body > >,
+                                   Val, ValRest... >,
                              Environ >
         {
             typedef typename Binding< EmptyVarValList, Environ,
                                       ParamList<Param, ParamRest...>,
                                       Val, ValRest... >::value
                     ExtVarValL;
-            typedef typename EnvExtend< ExtVarValL, Environ >::value ExtEnv;
+            typedef typename EnvExtend<ExtVarValL, E>::value ExtEnv;
 
             typedef typename EvalUnderEnv<Body, ExtEnv>::value value;
         };
-
-        template<class E, class Lamb, class Val, class... ValRest, class Environ> //
-        struct EvalUnderEnv< Call< Closure<E, Lamb>,
-                                   Val, ValRest... >,
-                             Environ >
-        { typedef typename EvalUnderEnv< Call<Lamb, Val, ValRest...>, E >::value value; };
 
     } // namespace internal
 
