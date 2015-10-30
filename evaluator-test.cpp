@@ -218,6 +218,7 @@ int main()
                    Int<7> >();
 
 
+
     // anonymous recursion, Factorial, F = lambda f. lambda n. n==0 ? 1 : n*( (f f) (n-1) )
     // ( (F F) n ) = n!
     StaticCheckEQ< Eval< Call< Call< Lambda< ParamList< Var<1> >, // F
@@ -238,22 +239,29 @@ int main()
                    Int<120> >();
 
 
+    // --------------------------------------------------------------------------------------------
     // Y Combinator, lambda f. (lambda x. (f lambda y. ((x x) y))
     //                          lambda x. (f lambda y. ((x x) y)))
+    typedef Lambda< ParamList< Var<0> >, // Y Combinator
+                    Call< Lambda< ParamList< Var<1> >,
+                                  Call< Var<0>,
+                                        Lambda< ParamList< Var<2> >,
+                                                Call< Call< Var<1>, Var<1> >,
+                                                      Var<2> > > > >,
+                          Lambda< ParamList< Var<1> >,
+                                  Call< Var<0>,
+                                        Lambda< ParamList< Var<2> >,
+                                                Call< Call< Var<1>, Var<1> >,
+                                                      Var<2> > > > > > >
+            YCombinater;
+
+
+
+
     // F = lambda f. lambda n. n==0 ? 1 : n*(f n-1)
     // (Fact 5) = ((Y F) 5)
-    StaticCheckEQ< Eval< Call< // Fact = (Y F)
-                             Call<Lambda< ParamList< Var<0> >, // Y Combinator
-                                          Call< Lambda< ParamList< Var<1> >,
-                                                        Call< Var<0>,
-                                                              Lambda< ParamList< Var<2> >,
-                                                                      Call< Call< Var<1>, Var<1> >,
-                                                                            Var<2> > > > >,
-                                                Lambda< ParamList< Var<1> >,
-                                                        Call< Var<0>,
-                                                              Lambda< ParamList< Var<2> >,
-                                                                      Call< Call< Var<1>, Var<1> >,
-                                                                            Var<2> > > > > > >,
+    StaticCheckEQ< Eval< Call<
+                             Call<YCombinater, // Fact = (Y F)
                                   Lambda< ParamList< Var<0> >, // F
                                           Lambda< ParamList< Var<1> >,
                                                   If_Then_Else< IsEqual< Var<1>, Int<0> >,
@@ -263,6 +271,36 @@ int main()
                                                                            Add< Var<1>, Int<-1> > > > > > > >,
                              Int<5> > >::value, // (Fact 5)
                    Int<120> >();
+
+
+    //----------------------------------------------------------------------------------------------------------
+    // Reduce = lambda List. lambda Op. lambda Init. List==Nil ? Init : Fst(list) Op (((Reduce Snd(list)) Op) Init)
+
+    // F = lambda f. lambda List. lambda Op. lambda Init. List==Nil ? Init : (Op Fst(list) (((f Snd(list)) Op) Init))
+    typedef Lambda< ParamList< Var<0> >, // f
+                    Lambda< ParamList< Var<1> >, // List
+                            Lambda< ParamList< Var<2> >, // Op
+                                    Lambda< ParamList< Var<3> >, // Init
+                                            If_Then_Else< IsUnit< Var<1> >,
+                                                          Var<3>,
+                                                          Call< Var<2>,
+                                                                Fst< Var<1> >,
+                                                                Call< Call< Call< Var<0>,
+                                                                                  Snd< Var<1> > >,
+                                                                            Var<2> >,
+                                                                      Var<3> > > > > > > >
+            F;
+    // Reduce = (Y F)
+    typedef Call<YCombinater, F> Reduce;
+
+    // Sum = lambda List. (((Reduce List) lambda x y. Add(x, y)) 0)
+    typedef Lambda< ParamList< Var<0> >, // List
+                    Call< Call< Call< Reduce, Var<0> >,
+                                Lambda< ParamList< Var<2>, Var<1> >,
+                                        Add< Var<2>, Var<1> > > >,
+                          Int<0> > >
+        Sum;
+    StaticCheckEQ< Eval< Call< Sum, List< Int<1>, Int<2>, Int<3> > > >::value, Int<6> >();
 
     return 0;
 }
