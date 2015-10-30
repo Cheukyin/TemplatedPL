@@ -22,7 +22,7 @@ int main()
     cout<< Eval< IsLess< Int<4>, Int<5> > >::value::value;
     cout<<endl;
     cout<<"4 = 4 : ";
-    cout<< Eval< IsEqual< Int<4>, Int<5> > >::value::value;
+    cout<< Eval< IsEqual< Int<4>, Int<4> > >::value::value;
     cout<<endl;
 
     cout<<endl;
