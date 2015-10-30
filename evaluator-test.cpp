@@ -206,7 +206,7 @@ int main()
                                                                    Add< Var<0>, Var<1> > >,
                                                            Int<3> > >,
                                              Var<0> > >,
-                                Int<7> > >::value,
+                               Int<7> > >::value,
                    Int<10> >();
 
     // syntatic closure
@@ -215,11 +215,11 @@ int main()
                                                      Add< Var<0>, Var<1> > > >,
                                      Int<3> >,
                                Int<4> > >::value,
-                    Int<7> >();
+                   Int<7> >();
 
 
     // anonymous recursion, Factorial, F = lambda f. lambda n. n==0 ? 1 : n*( (f f) (n-1) )
-    // ( (F F) 1 )
+    // ( (F F) n ) = n!
     StaticCheckEQ< Eval< Call< Call< Lambda< ParamList< Var<1> >, // F
                                              Lambda< ParamList< Var<0> >,
                                                      If_Then_Else< IsEqual< Var<0>, Int<0> >,
@@ -235,6 +235,33 @@ int main()
                                                                         Call< Call< Var<1>, Var<1> >,
                                                                               Add< Var<0>, Int<-1> > > > > > > >,
                                Int<5> > >::value,
+                   Int<120> >();
+
+
+    // Y Combinator, lambda f. (lambda x. (f lambda y. ((x x) y))
+    //                          lambda x. (f lambda y. ((x x) y)))
+    // F = lambda f. lambda n. n==0 ? 1 : n*(f n-1)
+    // (Fact 5) = ((Y F) 5)
+    StaticCheckEQ< Eval< Call< // Fact = (Y F)
+                             Call<Lambda< ParamList< Var<0> >, // Y Combinator
+                                          Call< Lambda< ParamList< Var<1> >,
+                                                        Call< Var<0>,
+                                                              Lambda< ParamList< Var<2> >,
+                                                                      Call< Call< Var<1>, Var<1> >,
+                                                                            Var<2> > > > >,
+                                                Lambda< ParamList< Var<1> >,
+                                                        Call< Var<0>,
+                                                              Lambda< ParamList< Var<2> >,
+                                                                      Call< Call< Var<1>, Var<1> >,
+                                                                            Var<2> > > > > > >,
+                                  Lambda< ParamList< Var<0> >, // F
+                                          Lambda< ParamList< Var<1> >,
+                                                  If_Then_Else< IsEqual< Var<1>, Int<0> >,
+                                                                Int<1>,
+                                                                Mul< Var<1>,
+                                                                     Call< Var<0>,
+                                                                           Add< Var<1>, Int<-1> > > > > > > >,
+                             Int<5> > >::value, // (Fact 5)
                    Int<120> >();
 
     return 0;
