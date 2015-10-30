@@ -23,5 +23,5 @@ ENDIF()
 
 INCLUDE_DIRECTORIES( . )
 
-AUX_SOURCE_DIRECTORY( . SRC_LIST )
-ADD_EXECUTABLE( evaluator-test ${SRC_LIST} )
+ADD_EXECUTABLE( evaluator-test evaluator-test.cpp )
+ADD_EXECUTABLE( examples examples.cpp )

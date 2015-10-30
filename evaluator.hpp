@@ -79,8 +79,8 @@ namespace TPL
 
         // ------------------------------------------------
         // Basic Data Type
-        template<int N> struct Int;
-        template<bool B> struct Bool;
+        template<int N> struct Int{ static const int value = N; };
+        template<bool B> struct Bool{ static const bool value = B; };
         template<int N> struct Var;
         struct Unit;
 
