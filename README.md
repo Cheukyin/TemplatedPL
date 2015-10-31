@@ -10,7 +10,7 @@ TemplatedPL简称TPL，是一门构建在C++模板上的DSL，
 * `lib.hpp`: 实现常用的高阶函数(如`Y-Combinator, Map, Reduce, Filter`等)
 * `examples.cpp`: TemplatedPL代码示例
 
-## 代码示例
+## TPL示例
 计算1到10偶数的和: 等价于`Sum( Filter( Range(1, 10), (lambda x. x%2 == 0) ) )`
 ```C++
 cout<< Eval< Call< Lib::Sum, Call< Lib::Filter,
@@ -19,7 +19,7 @@ cout<< Eval< Call< Lib::Sum, Call< Lib::Filter,
                                            IsEqual< Mod< Var<0>, Int<2> >,
                                                     Int<0> > > > > >::value::value;
 ```
-定义`Y-Combinator`: 等价于`lambda f. (lambda x. (f lambda y. ((x x) y)) lambda x. (f lambda y. ((x x) y)))`
+定义`Y-Combinator`: 等价于`lambda f.(lambda x.(f lambda y. ((x x) y)) lambda x.(f lambda y.((x x) y)))` 
 ```C++
 typedef Lambda< ParamList< Var<0> >,
                 Call< Lambda< ParamList< Var<1> >,
