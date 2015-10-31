@@ -1,6 +1,7 @@
 # TemlatedPL
 TemplatedPL简称TPL，是一门构建在C++模板上的DSL，  
-因此, TPL所有表达式的计算均在编译期完成.
+因此, TPL所有表达式的计算均在编译期完成.  
+  
 TPL本质上是一个极简的lisp解释器，支持词法闭包, 多参匿名函数，  
 不支持具名函数, 不过可通过构造`Y-Combinator`实现递归，   
 常用的高阶函数(如`Y-Combinator, Map, Reduce, Filter`等)均已在`lib.hpp`以库的形式提供
