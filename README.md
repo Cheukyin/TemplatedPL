@@ -13,7 +13,7 @@ TPL本质上是一个极简的lisp解释器，支持词法闭包, 多参匿名�
 * `examples.cpp`: TemplatedPL代码示例
 
 ## TPL示例
-计算1到10偶数的和: 等价于`Sum( Filter( Range(1, 10), (lambda x. x%2 == 0) ) )`
+计算1到10偶数的和: 等价于`Sum( Filter( Range(1, 10), (λx. x%2 == 0) ) )`
 ```C++
 cout<< Eval< Call< Lib::Sum, Call< Lib::Filter,
                                    Call< Lib::Range, Int<1>, Int<10> >,
@@ -21,7 +21,7 @@ cout<< Eval< Call< Lib::Sum, Call< Lib::Filter,
                                            IsEqual< Mod< Var<0>, Int<2> >,
                                                     Int<0> > > > > >::value::value;
 ```
-定义`Y-Combinator`: 等价于`lambda f.(lambda x.(f lambda y. ((x x) y)) lambda x.(f lambda y.((x x) y)))` 
+定义`Y-Combinator`: 等价于`λf.( λx.(f λy. ((x x) y)) λx.(f λy.((x x) y)) )` 
 ```C++
 typedef Lambda< ParamList< Var<0> >,
                 Call< Lambda< ParamList< Var<1> >,
@@ -73,5 +73,5 @@ typedef Lambda< ParamList< Var<0> >,
 * `Reduce`: 归约
 * `Map`: 映射
 * `Filter`: 过滤
-* `Range`: 从1到N的List
+* `Range`: 生成从1到N的List
 * `Sum`: 计算List的和
