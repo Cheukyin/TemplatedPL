@@ -33,12 +33,17 @@ int main()
     StaticCheckEQ< Eval< Add< Add< Int<1>, Int<3> >, Int<4> > >::value, Int<8> >();
     StaticCheckEQ< Eval< Add< Int<-9>, Int<45> > >::value, Int<36> >();
 
-
     // -------------------------------------------------------
     // Mul Testing
 
     StaticCheckEQ< Eval< Mul< Mul< Int<1>, Int<3> >, Int<4> > >::value, Int<12> >();
     StaticCheckEQ< Eval< Mul< Int<-9>, Int<6> > >::value, Int<-54> >();
+
+    // -------------------------------------------------------
+    // Mod Testing
+
+    StaticCheckEQ< Eval< Mod< Mul< Int<1>, Int<3> >, Int<4> > >::value, Int<3> >();
+    StaticCheckEQ< Eval< Mod< Int<9>, Int<6> > >::value, Int<3> >();
 
 
     // -------------------------------------------------------

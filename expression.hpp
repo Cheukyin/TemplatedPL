@@ -19,6 +19,8 @@ namespace TPL
     using internal::Add;           // Add<E1, E2>
     // Mul
     using internal::Mul;           // Mul<E1, E2>
+    // Mod
+    using internal::Mod;           // Mod<E1, E2>
 
     // >
     using internal::IsGreater;     // IsGreater<E1, E2>

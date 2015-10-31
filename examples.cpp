@@ -1,4 +1,5 @@
 #include "expression.hpp"
+#include "lib.hpp"
 #include <iostream>
 
 using namespace TPL;
@@ -14,7 +15,11 @@ int main()
     cout<<"4 * 5 = ";
     cout<< Eval< Mul< Int<4>, Int<5> > >::value::value;
     cout<<endl;
+    cout<<"4 % 5 = ";
+    cout<< Eval< Mod< Int<4>, Int<5> > >::value::value;
+    cout<<endl;
 
+    cout<<endl;
     cout<<"4 > 5 : ";
     cout<< Eval< IsGreater< Int<4>, Int<5> > >::value::value;
     cout<<endl;
@@ -53,15 +58,60 @@ int main()
 
     cout<<endl;
     cout<<"Multi-Parameter Lambda:"<<endl;
-    cout<<"(lambda x y z. x+y*z 2 3 4) = ";
+    cout<<"(lambda x y z. x+y*z 2 3 4) = "; // 14
     cout<< Eval< Call< Lambda< ParamList< Var<0>, Var<1>, Var<2> >,
                                Add< Var<0>, Mul< Var<1>, Var<2> > > >,
                        Int<2>, Int<3>, Int<4> > >::value::value;
     cout<<endl;
 
+    // ------------------------------------------------------------------
+    // Sum is implemented with Reduce
+    cout<<endl;
+    cout<<"Sum(1 ... 10) = "; // 55
+    cout<< Eval< Call< Lib::Sum, Call< Lib::Range, Int<1>, Int<10> > > >::value::value;
+    cout<<endl;
+
+    // ------------------------------------------------------------
+    // Multiply Range(1, 10) by 2, then Sum the List(Using Map) = 110
+    cout<<endl;
+    cout<<"Sum(Map(Range(1, 10), lambda x. x*2)) = ";
+    cout<< Eval< Call< Lib::Sum, Call< Lib::Map,
+                                       Call< Lib::Range, Int<1>, Int<10> >,
+                                       Lambda< ParamList< Var<0> >,
+                                               Mul< Var<0>, Int<2> > > > > >::value::value;
+    cout<<endl;
+
+    // --------------------------------------------------------
+    // Add all even num in Range(1, 10)(Using Filter) = 30
+    cout<<endl;
+    cout<<"Sum(Filter(Range(1, 10), lambda x. x%2 == 0)) = ";
+    cout<< Eval< Call< Lib::Sum, Call< Lib::Filter,
+                                       Call< Lib::Range, Int<1>, Int<10> >,
+                                       Lambda< ParamList< Var<0> >,
+                                               IsEqual< Mod< Var<0>, Int<2> >,
+                                                        Int<0> > > > > >::value::value;
+    cout<<endl;
+
+    // ------------------------------------------------------
+    // F = lambda f. lambda n. n==0 ? 1 : n*(f n-1)
+    // (Fact 5) = ((Y F) 5) = 120
+    cout<<endl;
+    cout<<"Caculate Factorial(5) with Y-Combinator:"<<endl;
+    cout<<"Fact(5) = ";
+    cout<< Eval< Call< Call< Lib::YCombinater,
+                             Lambda< ParamList< Var<0> >, // F
+                                     Lambda< ParamList< Var<1> >,
+                                             If_Then_Else< IsEqual< Var<1>, Int<0> >,
+                                                           Int<1>,
+                                                           Mul< Var<1>,
+                                                                Call< Var<0>,
+                                                                      Add< Var<1>, Int<-1> > > > > > > >,
+                       Int<5> > >::value::value; // (Fact 5)
+    cout<<endl;
+
     // ----------------------------------------------------------------------------------------
     // anonymous recursion, Factorial, F = lambda f. lambda n. n==0 ? 1 : n*( (f f) (n-1) )
-    // ( (F F) n ) = n!
+    // ( (F F) 6 ) = 720
     cout<<endl;
     cout<<"Caculate Factorial(6) with Anonymous Recursion:"<<endl;
     cout<<"Fact(6) = ";
@@ -80,73 +130,6 @@ int main()
                                                                 Call< Call< Var<1>, Var<1> >,
                                                                       Add< Var<0>, Int<-1> > > > > > > >,
                        Int<6> > >::value::value;
-    cout<<endl;
-
-    // ----------------------------------------------------------------------------------------
-    // Y Combinator, lambda f. (lambda x. (f lambda y. ((x x) y))
-    //                          lambda x. (f lambda y. ((x x) y)))
-    typedef Lambda< ParamList< Var<0> >,
-                    Call< Lambda< ParamList< Var<1> >,
-                                  Call< Var<0>,
-                                        Lambda< ParamList< Var<2> >,
-                                                Call< Call< Var<1>, Var<1> >,
-                                                      Var<2> > > > >,
-                          Lambda< ParamList< Var<1> >,
-                                  Call< Var<0>,
-                                        Lambda< ParamList< Var<2> >,
-                                                Call< Call< Var<1>, Var<1> >,
-                                                      Var<2> > > > > > >
-            YCombinater;
-
-    // ---------------------------------------------------
-    // Reduce = lambda List. lambda Op. lambda Init. List==Nil ? Init : Fst(list) Op (((Reduce Snd(list)) Op) Init)
-    // F = lambda f. lambda List. lambda Op. lambda Init. List==Nil ? Init : (Op Fst(list) (((f Snd(list)) Op) Init))
-    // Reduce = (Y F)
-    typedef Call<YCombinater, Lambda< ParamList< Var<0> >, // f
-                                      Lambda< ParamList< Var<1> >, // List
-                                              Lambda< ParamList< Var<2> >, // Op
-                                                      Lambda< ParamList< Var<3> >, // Init
-                                                              If_Then_Else< IsUnit< Var<1> >,
-                                                                            Var<3>,
-                                                                            Call< Var<2>,
-                                                                                  Fst< Var<1> >,
-                                                                                  Call< Call< Call< Var<0>,
-                                                                                                    Snd< Var<1> > >,
-                                                                                              Var<2> >,
-                                                                                        Var<3> > > > > > > > >
-            Reduce;
-
-    // -----------------------------------------------------------------------
-    // Sum = lambda List. (((Reduce List) lambda x y. Add(x, y)) 0)
-    typedef Lambda< ParamList< Var<0> >, // List
-                    Call< Call< Call< Reduce, Var<0> >,
-                                Lambda< ParamList< Var<2>, Var<1> >,
-                                        Add< Var<2>, Var<1> > > >,
-                          Int<0> > >
-            Sum;
-
-    // ------------------------------------------------------------------
-    cout<<endl;
-    cout<<"Sum the List that contains 1 to 5 using Reduce:"<<endl;
-    cout<<"Sum(1 ... 5) = ";
-    cout<< Eval< Call< Sum, List< Int<1>, Int<2>, Int<3>, Int<4>, Int<5> > > >::value::value;
-    cout<<endl;
-
-    // ------------------------------------------------------
-    // F = lambda f. lambda n. n==0 ? 1 : n*(f n-1)
-    // (Fact 5) = ((Y F) 5)
-    cout<<endl;
-    cout<<"Caculate Factorial(5) with Y-Combinator:"<<endl;
-    cout<<"Fact(5) = ";
-    cout<< Eval< Call< Call< YCombinater,
-                             Lambda< ParamList< Var<0> >, // F
-                                     Lambda< ParamList< Var<1> >,
-                                             If_Then_Else< IsEqual< Var<1>, Int<0> >,
-                                                           Int<1>,
-                                                           Mul< Var<1>,
-                                                                Call< Var<0>,
-                                                                      Add< Var<1>, Int<-1> > > > > > > >,
-                       Int<5> > >::value::value; // (Fact 5)
     cout<<endl;
 
     return 0;
