@@ -283,45 +283,60 @@ namespace TPL
 
 
 
-        // // ------------------------------------
-        // // Pair type
-        // template<class T1, class T2> struct Pair;
+        // --------------------------------------------------------------------------------------------------
+        // Pair type
+        template<class T1, class T2> struct Pair;
 
-        // template<class T1, class T2, class Environ> //
-        // struct EvalUnderEnv< Pair<T1, T2>, Environ >
-        // {
-        //     typedef typename EvalUnderEnv<T1, Environ>::value T1Val;
-        //     typedef typename EvalUnderEnv<T2, Environ>::value T2Val;
-        //     typedef Pair<T1Val, T2Val> value;
-        // };
+        // PairKont
+        template<class PairExp, class Environ, class Kont> struct PairKont1;
+        template<class Pairend, class Kont> struct PairKont2;
 
-        // // Pair.1
-        // template<class T>struct Fst;
+        // PairKont1
+        template<class PairExp, class Environ, class Kont, class Val>
+        struct ApplyKont< PairKont1<PairExp, Environ, Kont>, Val >
+        { typedef typename EvalUnderEnvKont< PairExp, Environ, PairKont2< Val, Kont > >::value value; };
 
-        // template<class T1, class T2, class Environ> //
-        // struct EvalUnderEnv< Fst< Pair<T1, T2> >, Environ >
-        // { typedef T1 value; };
+        // PairKont2
+        template<class Val1, class Kont, class Val2>
+        struct ApplyKont< PairKont2< Val1, Kont >, Val2 >
+        { typedef typename ApplyKont< Kont, Pair<Val1, Val2> >::value value; };
 
-        // template<class T, class Environ> //
-        // struct EvalUnderEnv< Fst<T>, Environ >
-        // {
-        //     typedef typename EvalUnderEnv<T, Environ>::value TVal;
-        //     typedef typename EvalUnderEnv< Fst<TVal>, Environ >::value value;
-        // };
+        // Pair Eval
+        template<class T1, class T2, class Environ, class Kont> //
+        struct EvalUnderEnvKont< Pair<T1, T2>, Environ, Kont >
+        { typedef typename EvalUnderEnvKont< T1, Environ, PairKont1<T2, Environ, Kont> >::value value; };
 
-        // // Pair.2
-        // template<class T>struct Snd;
+        // ---------------------------------------------
+        // Pair.1
+        template<class T>struct Fst;
 
-        // template<class T1, class T2, class Environ> //
-        // struct EvalUnderEnv< Snd< Pair<T1, T2> >, Environ >
-        // { typedef T2 value; };
+        // FstKont
+        template<class Kont> struct FstKont;
 
-        // template<class T, class Environ> //
-        // struct EvalUnderEnv< Snd<T>, Environ >
-        // {
-        //     typedef typename EvalUnderEnv<T, Environ>::value TVal;
-        //     typedef typename EvalUnderEnv< Snd<TVal>, Environ >::value value;
-        // };
+        template<class Kont, class T1, class T2> //
+        struct ApplyKont< FstKont<Kont>, Pair<T1, T2> >
+        { typedef typename ApplyKont< Kont, T1 >::value value; };
+
+        // Fst Eval
+        template<class T, class Environ, class Kont> //
+        struct EvalUnderEnvKont< Fst<T>, Environ, Kont >
+        { typedef typename EvalUnderEnvKont< T, Environ, FstKont<Kont> >::value value; };
+
+        // ---------------------------------------------
+        // Pair.2
+        template<class T>struct Snd;
+
+        // SndKont
+        template<class Kont> struct SndKont;
+
+        template<class Kont, class T1, class T2> //
+        struct ApplyKont< SndKont<Kont>, Pair<T1, T2> >
+        { typedef typename ApplyKont< Kont, T2 >::value value; };
+
+        // Snd Eval
+        template<class T, class Environ, class Kont> //
+        struct EvalUnderEnvKont< Snd<T>, Environ, Kont >
+        { typedef typename EvalUnderEnvKont< T, Environ, SndKont<Kont> >::value value; };
 
 
 
