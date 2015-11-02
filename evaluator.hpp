@@ -147,7 +147,7 @@ namespace TPL
 
         // MulKont
         template<class MultiplierExp, class Environ, class Kont> struct MulKont1;
-        template<class MultiplierExp, class Kont> struct MulKont2;
+        template<class Multiplier, class Kont> struct MulKont2;
 
         // MulKont1
         template<class MultiplierExp, class Environ, class Kont, int N>
@@ -169,8 +169,8 @@ namespace TPL
         template<class T1, class T2> struct Mod;
 
         // ModKont
-        template<class MultiplierExp, class Environ, class Kont> struct ModKont1;
-        template<class MultiplierExp, class Kont> struct ModKont2;
+        template<class ModendExp, class Environ, class Kont> struct ModKont1;
+        template<class Modend, class Kont> struct ModKont2;
 
         // MulKont1
         template<class ModendExp, class Environ, class Kont, int N>
@@ -189,70 +189,97 @@ namespace TPL
 
 
 
-        // // ----------------------------------
-        // // Comparing
+        // -----------------------------------------------------------------------------------------------------------
+        // Comparing
 
-        // // >
-        // template<class T1, class T2> struct IsGreater;
+        //----------------------------------------
+        // >
+        template<class T1, class T2> struct IsGreater;
 
-        // template<int N1, int N2, class Environ> //
-        // struct EvalUnderEnv< IsGreater< Int<N1>, Int<N2> >, Environ >
-        // { typedef Bool<(N1>N2)> value; };
+        // >Kont
+        template<class GreaterExp, class Environ, class Kont> struct IsGreaterKont1;
+        template<class Greaterend, class Kont> struct IsGreaterKont2;
 
-        // template<class T1, class T2, class Environ> //
-        // struct EvalUnderEnv< IsGreater<T1, T2>, Environ >
-        // {
-        //     typedef typename EvalUnderEnv<T1, Environ>::value T1Val;
-        //     typedef typename EvalUnderEnv<T2, Environ>::value T2Val;
-        //     typedef typename EvalUnderEnv<IsGreater<T1Val, T2Val>, Environ>::value value;
-        // };
+        // >Kont1
+        template<class GreaterExp, class Environ, class Kont, int N>
+        struct ApplyKont< IsGreaterKont1<GreaterExp, Environ, Kont>, Int<N> >
+        { typedef typename EvalUnderEnvKont< GreaterExp, Environ, IsGreaterKont2< Int<N>, Kont > >::value value; };
 
-        // // <
-        // template<class T1, class T2> struct IsLess;
+        // >Kont2
+        template<int N1, class Kont, int N2>
+        struct ApplyKont< IsGreaterKont2< Int<N1>, Kont >, Int<N2> >
+        { typedef typename ApplyKont< Kont, Bool<(N1>N2)> >::value value; };
 
-        // template<int N1, int N2, class Environ> //
-        // struct EvalUnderEnv< IsLess< Int<N1>, Int<N2> >, Environ >
-        // { typedef Bool<(N1<N2)> value; };
+        // > Eval
+        template<class T1, class T2, class Environ, class Kont> //
+        struct EvalUnderEnvKont< IsGreater<T1, T2>, Environ, Kont >
+        { typedef typename EvalUnderEnvKont< T1, Environ, IsGreaterKont1<T2, Environ, Kont> >::value value; };
 
-        // template<class T1, class T2, class Environ> //
-        // struct EvalUnderEnv< IsLess<T1, T2>, Environ >
-        // {
-        //     typedef typename EvalUnderEnv<T1, Environ>::value T1Val;
-        //     typedef typename EvalUnderEnv<T2, Environ>::value T2Val;
-        //     typedef typename EvalUnderEnv<IsLess<T1Val, T2Val>, Environ>::value value;
-        // };
+        //----------------------------------------
+        // <
+        template<class T1, class T2> struct IsLess;
 
-        // // ==
-        // template<class T1, class T2> struct IsEqual;
+        // <Kont
+        template<class LessExp, class Environ, class Kont> struct IsLessKont1;
+        template<class Lessend, class Kont> struct IsLessKont2;
 
-        // template<int N1, int N2, class Environ> //
-        // struct EvalUnderEnv< IsEqual< Int<N1>, Int<N2> >, Environ >
-        // { typedef Bool<(N1==N2)> value; };
+        // <Kont1
+        template<class LessExp, class Environ, class Kont, int N>
+        struct ApplyKont< IsLessKont1<LessExp, Environ, Kont>, Int<N> >
+        { typedef typename EvalUnderEnvKont< LessExp, Environ, IsLessKont2< Int<N>, Kont > >::value value; };
 
-        // template<class T1, class T2, class Environ> //
-        // struct EvalUnderEnv< IsEqual<T1, T2>, Environ >
-        // {
-        //     typedef typename EvalUnderEnv<T1, Environ>::value T1Val;
-        //     typedef typename EvalUnderEnv<T2, Environ>::value T2Val;
-        //     typedef typename EvalUnderEnv<IsEqual<T1Val, T2Val>, Environ>::value value;
-        // };
+        // <Kont2
+        template<int N1, class Kont, int N2>
+        struct ApplyKont< IsLessKont2< Int<N1>, Kont >, Int<N2> >
+        { typedef typename ApplyKont< Kont, Bool<(N1<N2)> >::value value; };
 
-        // // IsUnit
-        // template<class T> struct IsUnit;
+        // < Eval
+        template<class T1, class T2, class Environ, class Kont> //
+        struct EvalUnderEnvKont< IsLess<T1, T2>, Environ, Kont >
+        { typedef typename EvalUnderEnvKont< T1, Environ, IsLessKont1<T2, Environ, Kont> >::value value; };
 
-        // template<class Environ> //
-        // struct EvalUnderEnv< IsUnit<Unit>, Environ >
-        // { typedef Bool<true> value; };
+        //----------------------------------------
+        // ==
+        template<class T1, class T2> struct IsEqual;
 
-        // template<class T, class Environ> //
-        // struct EvalUnderEnv< IsUnit<T>, Environ >
-        // {
-        //     typedef typename EvalUnderEnv<T, Environ>::value TVal;
-        //     typedef typename Select< IsEQ<TVal, Unit>::value,
-        //                              Bool<true>,
-        //                              Bool<false> >::value
-        //              value;
-        // };
+        // ==Kont
+        template<class EqualExp, class Environ, class Kont> struct IsEqualKont1;
+        template<class Equalend, class Kont> struct IsEqualKont2;
+
+        // ==Kont1
+        template<class EqualExp, class Environ, class Kont, int N>
+        struct ApplyKont< IsEqualKont1<EqualExp, Environ, Kont>, Int<N> >
+        { typedef typename EvalUnderEnvKont< EqualExp, Environ, IsEqualKont2< Int<N>, Kont > >::value value; };
+
+        // ==Kont2
+        template<int N1, class Kont, int N2>
+        struct ApplyKont< IsEqualKont2< Int<N1>, Kont >, Int<N2> >
+        { typedef typename ApplyKont< Kont, Bool<(N1==N2)> >::value value; };
+
+        // == Eval
+        template<class T1, class T2, class Environ, class Kont> //
+        struct EvalUnderEnvKont< IsEqual<T1, T2>, Environ, Kont >
+        { typedef typename EvalUnderEnvKont< T1, Environ, IsEqualKont1<T2, Environ, Kont> >::value value; };
+
+        //----------------------------------------
+        // IsUnit
+        template<class T> struct IsUnit;
+
+        // IsUnitKont
+        template<class Kont> struct IsUnitKont;
+
+        template<class Kont> //
+        struct ApplyKont< IsUnitKont<Kont>, Unit >
+        { typedef typename ApplyKont< Kont, Bool<true> >::value value; };
+
+        template<class Kont, class Val> //
+        struct ApplyKont< IsUnitKont<Kont>, Val >
+        { typedef typename ApplyKont< Kont, Bool<false> >::value value; };
+
+        // == Eval
+        template<class T, class Environ, class Kont> //
+        struct EvalUnderEnvKont< IsUnit<T>, Environ, Kont >
+        { typedef typename EvalUnderEnvKont< T, Environ, IsUnitKont<Kont> >::value value; };
 
 
 
