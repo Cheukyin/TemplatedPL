@@ -68,12 +68,12 @@ namespace TPL
 
 
 
-        // ----------------------------------------------------------
+        // ---------------------------------------------------------------------------
         // ApplyKont
         template<class Kont, class Val> struct ApplyKont;
 
 
-        // --------------------------------------------------
+        // ----------------------------------------------------------------------------
         // EndKont
         struct EndKont;
 
@@ -83,7 +83,7 @@ namespace TPL
 
 
 
-        //------------------------------------------------
+        //-------------------------------------------------------------------------------
         // Eval
         template<class Exp, class Environ, class Kont> struct EvalUnderEnvKont;
 
@@ -93,7 +93,7 @@ namespace TPL
 
 
 
-        // ------------------------------------------------
+        // -------------------------------------------------------------------------------
         // Basic Data Type
         template<int N> struct Int{ static const int value = N; };
         template<bool B> struct Bool{ static const bool value = B; };
@@ -118,11 +118,10 @@ namespace TPL
 
 
 
-        // // -----------------------------
-        // // Add
-        // template<class T1, class T2> struct Add;
+        // -----------------------------------------------------------------------------------
+        // Add
+        template<class T1, class T2> struct Add;
 
-        // -------------------------------------------------
         // AddKont
         template<class AddendExp, class Environ, class Kont> struct AddKont1;
         template<class Addend, class Kont> struct AddKont2;
@@ -130,60 +129,63 @@ namespace TPL
         // AddKont1
         template<class AddendExp, class Environ, class Kont, int N>
         struct ApplyKont< AddKont1<AddendExp, Environ, Kont>, Int<N> >
-        {
-            typedef typename EvalUnderEnvKont< AddendExp,
-                                               Environ,
-                                               AddKont2< Int<N>, Kont > >::value value;
-        };
+        { typedef typename EvalUnderEnvKont< AddendExp, Environ, AddKont2< Int<N>, Kont > >::value value; };
 
         // AddKont2
         template<int N1, class Kont, int N2>
         struct ApplyKont< AddKont2< Int<N1>, Kont >, Int<N2> >
         { typedef typename ApplyKont< Kont, Int<N1+N2> >::value value; };
 
-        // template<int N1, int N2, class Environ> //
-        // struct EvalUnderEnv< Add< Int<N1>, Int<N2> >, Environ >
-        // { typedef Int<N1+N2> value; };
+        // Add Eval
+        template<class T1, class T2, class Environ, class Kont> //
+        struct EvalUnderEnvKont< Add<T1, T2>, Environ, Kont >
+        { typedef typename EvalUnderEnvKont< T1, Environ, AddKont1<T2, Environ, Kont> >::value value; };
 
-        // template<class T1, class T2, class Environ> //
-        // struct EvalUnderEnv< Add<T1, T2>, Environ >
-        // {
-        //     typedef typename EvalUnderEnv<T1, Environ>::value T1Val;
-        //     typedef typename EvalUnderEnv<T2, Environ>::value T2Val;
-        //     typedef typename EvalUnderEnv< Add<T1Val, T2Val>, Environ >::value value;
-        // };
+        // --------------------------------------------------------------------------------------
+        // Mul
+        template<class T1, class T2> struct Mul;
 
-        // // -----------------------------
-        // // Mul
-        // template<class T1, class T2> struct Mul;
+        // MulKont
+        template<class MultiplierExp, class Environ, class Kont> struct MulKont1;
+        template<class MultiplierExp, class Kont> struct MulKont2;
 
-        // template<int N1, int N2, class Environ> //
-        // struct EvalUnderEnv< Mul< Int<N1>, Int<N2> >, Environ >
-        // { typedef Int<N1 * N2> value; };
+        // MulKont1
+        template<class MultiplierExp, class Environ, class Kont, int N>
+        struct ApplyKont< MulKont1<MultiplierExp, Environ, Kont>, Int<N> >
+        { typedef typename EvalUnderEnvKont< MultiplierExp, Environ, MulKont2< Int<N>, Kont > >::value value; };
 
-        // template<class T1, class T2, class Environ> //
-        // struct EvalUnderEnv< Mul<T1, T2>, Environ >
-        // {
-        //     typedef typename EvalUnderEnv<T1, Environ>::value T1Val;
-        //     typedef typename EvalUnderEnv<T2, Environ>::value T2Val;
-        //     typedef typename EvalUnderEnv< Mul<T1Val, T2Val>, Environ >::value value;
-        // };
+        // MulKont2
+        template<int N1, class Kont, int N2>
+        struct ApplyKont< MulKont2< Int<N1>, Kont >, Int<N2> >
+        { typedef typename ApplyKont< Kont, Int<N1*N2> >::value value; };
 
-        // // -----------------------------
-        // // Mod
-        // template<class T1, class T2> struct Mod;
+        // Mul Eval
+        template<class T1, class T2, class Environ, class Kont> //
+        struct EvalUnderEnvKont< Mul<T1, T2>, Environ, Kont >
+        { typedef typename EvalUnderEnvKont< T1, Environ, MulKont1<T2, Environ, Kont> >::value value; };
 
-        // template<int N1, int N2, class Environ> //
-        // struct EvalUnderEnv< Mod< Int<N1>, Int<N2> >, Environ >
-        // { typedef Int<N1 % N2> value; };
+        // -----------------------------
+        // Mod
+        template<class T1, class T2> struct Mod;
 
-        // template<class T1, class T2, class Environ> //
-        // struct EvalUnderEnv< Mod<T1, T2>, Environ >
-        // {
-        //     typedef typename EvalUnderEnv<T1, Environ>::value T1Val;
-        //     typedef typename EvalUnderEnv<T2, Environ>::value T2Val;
-        //     typedef typename EvalUnderEnv< Mod<T1Val, T2Val>, Environ >::value value;
-        // };
+        // ModKont
+        template<class MultiplierExp, class Environ, class Kont> struct ModKont1;
+        template<class MultiplierExp, class Kont> struct ModKont2;
+
+        // MulKont1
+        template<class ModendExp, class Environ, class Kont, int N>
+        struct ApplyKont< ModKont1<ModendExp, Environ, Kont>, Int<N> >
+        { typedef typename EvalUnderEnvKont< ModendExp, Environ, ModKont2< Int<N>, Kont > >::value value; };
+
+        // MulKont2
+        template<int N1, class Kont, int N2>
+        struct ApplyKont< ModKont2< Int<N1>, Kont >, Int<N2> >
+        { typedef typename ApplyKont< Kont, Int<N1%N2> >::value value; };
+
+        // Mod Eval
+        template<class T1, class T2, class Environ, class Kont> //
+        struct EvalUnderEnvKont< Mod<T1, T2>, Environ, Kont >
+        { typedef typename EvalUnderEnvKont< T1, Environ, ModKont1<T2, Environ, Kont> >::value value; };
 
 
 
