@@ -1,7 +1,7 @@
-#include "utils.hpp"
-
 #ifndef EVALUATOR_H_
 #define EVALUATOR_H_
+
+#include "utils.hpp"
 
 // Evaluator
 namespace TPL

@@ -1,7 +1,7 @@
-#include "evaluator.hpp"
-
 #ifndef EXPRESSION_H_
 #define EXPRESSION_H_
+
+#include "evaluator.hpp"
 
 // Expression
 namespace TPL
