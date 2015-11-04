@@ -10,7 +10,6 @@ using internal::VarValList;
 using internal::EmptyVarValList;
 using internal::VarValListExtend;
 using internal::VarValListLookup;
-using internal::Binding;
 using internal::Env;
 using internal::EmptyEnv;
 using internal::EnvExtend;
@@ -37,7 +36,7 @@ int main()
     // Mul Testing
 
     StaticCheckEQ< Eval< Mul< Mul< Int<1>, Int<3> >, Int<4> > >::value, Int<12> >();
-    StaticCheckEQ< Eval< Mul< Int<-9>, Int<6> > >::value, Int<-54> >();
+    StaticCheckEQ< Eval< Mul< Add< Int<-7>, Int<-2> >, Add< Int<3>, Int<3> > > >::value, Int<-54> >();
 
     // -------------------------------------------------------
     // Mod Testing
@@ -63,6 +62,8 @@ int main()
 
     typedef Pair< Pair< Int<4>, Bool<true> >, Pair< Pair<Int<2>, Unit>, Bool<false> > > P;
     StaticCheckEQ< Eval<P>::value, P >();
+    StaticCheckEQ< Eval< IsPair<P> >::value, Bool<true> >();
+    StaticCheckEQ< Eval< IsPair< Add< Int<1>, Int<2> > > >::value, Bool<false> >();
     StaticCheckEQ< Eval< Fst< Fst<P> > >::value, Int<4> >();
     StaticCheckEQ< Eval< Snd< Fst< Snd<P> > > >::value, Unit >();
     StaticCheckEQ< Eval< Snd< Snd<P> > >::value, Bool<false> >();
@@ -83,26 +84,26 @@ int main()
     StaticCheckEQ< Eval<L1>::value, Eval<P1>::value >();
     StaticCheckEQ< Eval< List< Int<5> > >::value, Pair< Int<5>, Unit > >();
 
-    // IsList
-    StaticCheckEQ< Eval< IsList<L1> >::value, Bool<true> >();
-    StaticCheckEQ< Eval< IsList<P1> >::value, Bool<true> >();
-    StaticCheckEQ< Eval< IsList<Unit> >::value, Bool<true> >();
-    StaticCheckEQ< Eval< IsList< Snd<Snd<P1> > > >::value, Bool<true> >();
-    StaticCheckEQ< Eval< IsList<P> >::value, Bool<false> >();
+    // // IsList
+    // StaticCheckEQ< Eval< IsList<L1> >::value, Bool<true> >();
+    // StaticCheckEQ< Eval< IsList<P1> >::value, Bool<true> >();
+    // StaticCheckEQ< Eval< IsList<Unit> >::value, Bool<true> >();
+    // StaticCheckEQ< Eval< IsList< Snd<Snd<P1> > > >::value, Bool<true> >();
+    // StaticCheckEQ< Eval< IsList<P> >::value, Bool<false> >();
 
-    //// List.N
-    typedef List< Int<0>, Int<1>, Int<2>, Int<3>, Int<4> > L3;
-    StaticCheckEQ< Eval< ListRef< L3, Add< Int<2>, Int<0> > > >::value, Int<2> >();
-    StaticCheckEQ< Eval< ListRef< ListRef< L1, Add< Int<0>, Int<0> > >,
-                                  Add< Int<-2>, Int<2> > > >::value,
-                   Int<2> >();
+    // //// List.N
+    // typedef List< Int<0>, Int<1>, Int<2>, Int<3>, Int<4> > L3;
+    // StaticCheckEQ< Eval< ListRef< L3, Add< Int<2>, Int<0> > > >::value, Int<2> >();
+    // StaticCheckEQ< Eval< ListRef< ListRef< L1, Add< Int<0>, Int<0> > >,
+    //                               Add< Int<-2>, Int<2> > > >::value,
+    //                Int<2> >();
 
-    // ListAppend
-    typedef List< Int<0>, Int<1>, Int<2>, Int<3>, Int<4>, Int<5> > L4;
-    StaticCheckEQ< Eval< ListAppend< L3, Int<5> > >::value, Eval<L4>::value >();
-    StaticCheckEQ< Eval< ListAppend< ListAppend< L3, Add< Int<1>, Int<4> > >,
-                                     List< Int<9> > > >::value,
-                   Eval< ListAppend< L4, List< Int<9> > > >::value >();
+    // // ListAppend
+    // typedef List< Int<0>, Int<1>, Int<2>, Int<3>, Int<4>, Int<5> > L4;
+    // StaticCheckEQ< Eval< ListAppend< L3, Int<5> > >::value, Eval<L4>::value >();
+    // StaticCheckEQ< Eval< ListAppend< ListAppend< L3, Add< Int<1>, Int<4> > >,
+    //                                  List< Int<9> > > >::value,
+    //                Eval< ListAppend< L4, List< Int<9> > > >::value >();
 
 
     // -------------------------------------------------------
@@ -181,16 +182,6 @@ int main()
 
 
     // --------------------------------------------------------
-    // Apply
-
-    // Binding
-    StaticCheckEQ< Binding< VarValL0, EmptyEnv, ParamList< Var<2> >, Int<2> >::value,
-                   VarValL1 >();
-    StaticCheckEQ< Binding< EmptyVarValList, EmptyEnv,
-                            ParamList< Var<0>, Var<1> >, Int<0>, Int<1> >::value,
-                   VarValList< Var<1>, Int<1>,
-                               VarValList< Var<0>, Int<0>, EmptyVarValList > > >();
-
     // Call
     StaticCheckEQ< Eval< Call< Plus, Int<2>, Int<1> > >::value,
                    Int<3> >();

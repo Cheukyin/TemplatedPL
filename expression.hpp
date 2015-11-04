@@ -1,7 +1,7 @@
-#include "evaluator.hpp"
-
 #ifndef EXPRESSION_H_
 #define EXPRESSION_H_
+
+#include "evaluator.hpp"
 
 // Expression
 namespace TPL
@@ -33,6 +33,8 @@ namespace TPL
 
     // Pair type
     using internal::Pair;          // Pair<E1, E2>
+    // IsPair
+    using internal::IsPair;        // IsPair<E>
     // Pair.1
     using internal::Fst;           // Fst<P>
     // Pair.2
@@ -40,12 +42,12 @@ namespace TPL
 
     // List type
     using internal::List;          // List<E, ERest...>
-    //IsList
-    using internal::IsList;        // IsList<E>
-    // List.N
-    using internal::ListRef;       // ListRef<L, N>
-    // ListAppend
-    using internal::ListAppend;    // ListAppend<L, E>
+    // //IsList
+    // using internal::IsList;        // IsList<E>
+    // // List.N
+    // using internal::ListRef;       // ListRef<L, N>
+    // // ListAppend
+    // using internal::ListAppend;    // ListAppend<L, E>
 
     // If_Then_Else
     using internal::If_Then_Else;  // If_Then_Else<Cond, E1, E2>

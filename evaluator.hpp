@@ -8,7 +8,6 @@ namespace TPL
 {
     namespace internal
     {
-        using CYTL::UTIL::enable_if;
         using CYTL::UTIL::EmptyType;
         using CYTL::UTIL::Select;
         using CYTL::UTIL::IsEQ;
@@ -110,7 +109,7 @@ namespace TPL
 
         template<int N, class Environ, class Kont> //
         struct EvalUnderEnvKont< Var<N>, Environ, Kont >
-        { typedef typename ApplyKont< Kont, EnvLookup< Var<N>, Environ > >::value value; };
+        { typedef typename ApplyKont< Kont, typename EnvLookup< Var<N>, Environ >::value >::value value; };
 
         template<class Environ, class Kont> //
         struct EvalUnderEnvKont< Unit, Environ, Kont >
@@ -378,7 +377,7 @@ namespace TPL
 
 
 
-        // ------------------------------------
+        // ----------------------------------------------------------------------------------
         // If_Then_Else
         template<class Cond, class T1, class T2> struct If_Then_Else;
 
@@ -400,95 +399,106 @@ namespace TPL
 
 
 
-        // // ---------------------------------------------
-        // // Lambda
+        // -----------------------------------------------------------------------------------
+        // Lambda
 
-        // // ParamList
-        // template<class... Param> struct ParamList;
+        // ---------------------
+        // Closure
+        template<class Environ, class Fn> struct Closure;
 
-        // template<class Param, class... ParamTail, class Environ> //
-        // struct EvalUnderEnv< ParamList< Param, ParamTail... >, Environ >
-        // { typedef ParamList< Param, ParamTail... > value; };
+        template<class E, class Fn, class Environ, class Kont> //
+        struct EvalUnderEnvKont< Closure<E, Fn>, Environ, Kont >
+        { typedef typename ApplyKont< Kont, Closure<E, Fn> >::value value; };
 
+        // -------------------------
+        // ParamList
+        template<class... Param> struct ParamList;
 
-        // // Closure
-        // template<class Environ, class Fn> struct Closure;
+        // ----------------------
+        // Lambda
+        template<class ParamL, class Body> struct Lambda;
 
-        // template<class E, class Fn, class Environ> //
-        // struct EvalUnderEnv< Closure<E, Fn>, Environ >
-        // { typedef Closure<E, Fn> value; };
-
-
-        // // Lambda
-        // template<class ParamL, class Body> struct Lambda;
-
-        // template<class Param, class... ParamTail, class Body, class Environ> //
-        // struct EvalUnderEnv< Lambda< ParamList< Param, ParamTail... >, Body >, Environ >
-        // {
-        //     typedef ParamList< Param, ParamTail... > PVal;
-        //     typedef Closure< Environ, Lambda<PVal, Body> > value;
-        // };
+        template<class Param, class... ParamTail, class Body, class Environ, class Kont> //
+        struct EvalUnderEnvKont< Lambda< ParamList< Param, ParamTail... >, Body >, Environ, Kont >
+        {
+            typedef ParamList< Param, ParamTail... > PL;
+            typedef typename ApplyKont< Kont, Closure< Environ, Lambda<PL, Body> > >::value value;
+        };
 
 
 
-        // // ------------------------------------------------------------
-        // // Apply
+        // ------------------------------------------------------------
+        // Apply
 
-        // // Binding
-        // template<class VarValL, class Environ, class PL, class... Val> struct Binding;
+        // BindKont
+        template<class Kont,
+                 class VarValL,
+                 class Fn,
+                 class Environ, class... Val> struct BindKont;
 
-        // template<class VarValL, class Environ, //
-        //          int N, class... ParamRest,
-        //          class Val, class... ValRest>
-        // struct Binding< VarValL, Environ,
-        //                 ParamList< Var<N>, ParamRest... >,
-        //                 Val, ValRest... >
-        // {
-        //     typedef typename EvalUnderEnv<Val, Environ>::value TVal;
-        //     typedef typename VarValListExtend< Var<N>, TVal, VarValL >::value ExtVarValL;
+        // apply CallKont
+        template<class Kont, //
+                 class VarValL,
+                 class E, class P, class... PRest, class Body,
+                 class Environ, class Val, class... ValRest,
+                 class V>
+        struct ApplyKont< BindKont<Kont,
+                                   VarValL,
+                                   Closure< E, Lambda<ParamList<P, PRest...>, Body> >,
+                                   Environ, Val, ValRest...>,
+                          V >
+        {
+            typedef typename EvalUnderEnvKont< Val,
+                                               Environ,
+                                               BindKont<Kont,
+                                                        typename VarValListExtend<P, V, VarValL>::value,
+                                                        Closure< E, Lambda<ParamList<PRest...>, Body> >,
+                                                        Environ, ValRest...> >::value
 
-        //     static const int ParamNum = sizeof...(ParamRest)+1;
-        //     static const int ValNum = sizeof...(ValRest)+1;
+                    value;
+        };
 
-        //     typedef typename Select< ParamNum ==1 && ValNum == 1,
-        //                              EmptyType,
-        //                              ParamList<ParamRest...> >::value
-        //             TmpParam;
+        template<class Kont, //
+                 class VarValL,
+                 class E, class P, class Body,
+                 class Environ,
+                 class V>
+        struct ApplyKont< BindKont<Kont,
+                                   VarValL,
+                                   Closure< E, Lambda<ParamList<P>, Body> >,
+                                   Environ>,
+                          V >
+        {
+            typedef typename EvalUnderEnvKont< Body,
+                                               typename EnvExtend< typename VarValListExtend<P, V, VarValL>::value,
+                                                                   E >::value,
+                                               Kont >::value
 
-        //     typedef typename Binding< ExtVarValL, Environ, TmpParam, ValRest... >::value value;
-        // };
-        // template<class VarValL, class Environ, class... ValRest> //
-        // struct Binding< VarValL, Environ, EmptyType, ValRest... >
-        // { typedef VarValL value; };
+                    value;
+        };
 
+        // Call
+        template<class Fn, class... Val> struct Call;
 
-        // // Call
-        // template<class Fn, class... Val> struct Call;
+        // CallKont
+        template<class Kont, class Environ, class... Val> struct CallKont;
 
-        // template<class T, class Val, class... ValRest, class Environ> //
-        // struct EvalUnderEnv< Call< T, Val, ValRest... >, Environ >
-        // {
-        //     typedef typename EvalUnderEnv< T, Environ >::value TVal;
-        //     typedef typename EvalUnderEnv< Call<TVal, Val, ValRest...>, Environ >::value value;
-        // };
+        template<class Kont, class Environ, class Val, class... ValRest, class Fn>
+        struct ApplyKont< CallKont<Kont, Environ, Val, ValRest...>, Fn >
+        {
+            typedef typename EvalUnderEnvKont< Val,
+                                               Environ,
+                                               BindKont<Kont,
+                                                        EmptyVarValList,
+                                                        Fn,
+                                                        Environ, ValRest...> >::value
+                    value;
+        };
 
-        // template<class E, //
-        //          class Param, class... ParamRest, class Body,
-        //          class Val, class... ValRest,
-        //          class Environ>
-        // struct EvalUnderEnv< Call< Closure< E,
-        //                                     Lambda< ParamList<Param, ParamRest...>, Body > >,
-        //                            Val, ValRest... >,
-        //                      Environ >
-        // {
-        //     typedef typename Binding< EmptyVarValList, Environ,
-        //                               ParamList<Param, ParamRest...>,
-        //                               Val, ValRest... >::value
-        //             ExtVarValL;
-        //     typedef typename EnvExtend<ExtVarValL, E>::value ExtEnv;
-
-        //     typedef typename EvalUnderEnv<Body, ExtEnv>::value value;
-        // };
+        // Call Eval
+        template<class Fn, class... Val, class Environ, class Kont> //
+        struct EvalUnderEnvKont< Call<Fn, Val...>, Environ, Kont >
+        { typedef typename EvalUnderEnvKont< Fn, Environ, CallKont<Kont, Environ, Val...> >::value value; };
 
     } // namespace internal
 

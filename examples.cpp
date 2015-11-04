@@ -38,16 +38,16 @@ int main()
     cout<< Eval< Snd< Pair< Int<4>, Int<5> > > >::value::value;
     cout<<endl;
 
-    cout<<endl;
-    cout<<"Is Pair<4, 5> a List?                                   : ";
-    cout<< Eval< IsList< Pair< Int<4>, Int<5> > > >::value::value;
-    cout<<endl;
-    cout<<"The num at index 2 of List<0, 1, 2, 3>                  : ";
-    cout<< Eval< ListRef< List< Int<0>, Int<1>, Int<2>, Int<3> >, Int<2> > >::value::value;
-    cout<<endl;
-    cout<<"The num at index 4 of ListAppend< List<0, 1, 2, 3>, 9 > : ";
-    cout<< Eval< ListRef< ListAppend< List< Int<0>, Int<1>, Int<2>, Int<3> >, Int<9> >, Int<4> > >::value::value;
-    cout<<endl;
+    //cout<<endl;
+    //cout<<"Is Pair<4, 5> a List?                                   : ";
+    //cout<< Eval< IsList< Pair< Int<4>, Int<5> > > >::value::value;
+    //cout<<endl;
+    //cout<<"The num at index 2 of List<0, 1, 2, 3>                  : ";
+    //cout<< Eval< ListRef< List< Int<0>, Int<1>, Int<2>, Int<3> >, Int<2> > >::value::value;
+    //cout<<endl;
+    //cout<<"The num at index 4 of ListAppend< List<0, 1, 2, 3>, 9 > : ";
+    //cout<< Eval< ListRef< ListAppend< List< Int<0>, Int<1>, Int<2>, Int<3> >, Int<9> >, Int<4> > >::value::value;
+    //cout<<endl;
 
     cout<<endl;
     cout<<"If 4<5 then 4+5 else 4-5 = ";
@@ -94,7 +94,7 @@ int main()
 
     // ------------------------------------------------------
     // F = lambda f. lambda n. n==0 ? 1 : n*(f n-1)
-    // (Fact 5) = ((Y F) 5) = 120
+    //(Fact 5) = ((Y F) 5) = 120
     cout<<endl;
     cout<<"Caculate Factorial(5) with Y-Combinator:"<<endl;
     cout<<"Fact(5) = ";
@@ -111,7 +111,7 @@ int main()
 
     // ----------------------------------------------------------------------------------------
     // anonymous recursion, Factorial, F = lambda f. lambda n. n==0 ? 1 : n*( (f f) (n-1) )
-    // ( (F F) 6 ) = 720
+    //( (F F) 6 ) = 720
     cout<<endl;
     cout<<"Caculate Factorial(6) with Anonymous Recursion:"<<endl;
     cout<<"Fact(6) = ";

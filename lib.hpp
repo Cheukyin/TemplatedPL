@@ -1,7 +1,7 @@
-#include "expression.hpp"
-
 #ifndef TPL_LIB_H
 #define TPL_LIB_H
+
+#include "expression.hpp"
 
 namespace TPL
 {

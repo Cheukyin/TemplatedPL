@@ -58,11 +58,38 @@ namespace CYTL
 
 
         // ------------------------------------
-        // enable_if
-        template<bool B, class T> struct enable_if;
+        // Enable_If
+        template<bool B, class T> struct Enable_If;
         template<class T>
-        struct enable_if<true, T>
+        struct Enable_If<true, T>
         { typedef T type; };
+
+
+        // ---------------------------------
+        // Cons
+        template<class Head, class Tail> struct Cons;
+
+        // Car
+        template<class Pair> struct Car;
+        template<class Head, class Tail>
+        struct Car< Cons<Head, Tail> >
+        { typedef Head value; };
+
+        // Cdr
+        template<class Pair> struct Cdr;
+        template<class Head, class Tail>
+        struct Cdr< Cons<Head, Tail> >
+        { typedef Tail value; };
+
+
+        // -------------------------------
+        // TypeList
+        template<class Head, class... Tail>
+        struct TypeList
+        { typedef Cons< Head, typename TypeList<Tail...>::value > value; };
+        template<class Head>
+        struct TypeList<Head>
+        { typedef Cons<Head, EmptyType> value; };
     }
 }
 
