@@ -1,19 +1,29 @@
 # TemlatedPL
-TemplatedPL简称TPL，是一门构建在C++模板上的DSL，  
-因此, TPL所有表达式的计算均在编译期完成.  
+TemplatedPL(TPL) is a DSL built upon C++ template,  
+therefore, all evaluations of expressions in TPL would be accomplished at compile time.  
   
-TPL本质上是一个极简的lisp解释器，支持词法闭包, 多参匿名函数，  
-不支持具名函数, 不过可通过构造`Y-Combinator`实现递归，   
-常用的高阶函数(如`Y-Combinator, Map, Reduce, Filter`等)均已在`lib.hpp`以库的形式提供
+Essentially, TPL is a simple Lisp Interpreter,  
+which supports  
+`Lexical Closure`, `Multi-Parameter Lambda Expression` and `First Class Continuation(call/cc)`.  
+   
+TPL, however, doesn't support `Named Function`,  
+so you must write a `Y-Combinator` to implement recursive functions.  
+Fortunately, the common higher-order functions(`YCombinator, Map, Reduce, Filter`, etc)  
+and some frequently-used recursive functions have been provided as library functions in `lib.hpp`.  
+  
+Because the code of the interpreter is heavily written in `Continuation-Passing-Style(CPS)`,  
+you may find it difficult to understand if you have no experience in writing a lisp-like interpreter,  
+I recommend you to read Chapter 4 in `SICP` && Chapter 5 in `EOPL`.  
+If you want to learn more Template-Meta-Programming skills, you should read Chapter 2&&3 in `Modern C++ Design`.
 
-## 源码主要结构
-* `evaluator.hpp`: 解释器实现核心
-* `evaluator-test.hpp`: 解释器单元测试
-* `lib.hpp`: 实现常用的高阶函数(如`Y-Combinator, Map, Reduce, Filter`等)
-* `examples.cpp`: TemplatedPL代码示例
+## Source Code Structure
+* `evaluator.hpp`: the core of the interpreter of TPL
+* `evaluator-test.hpp`: unittest of the interpreter
+* `lib.hpp`: provides some common higher-order functions and recursive functions(`Y-Combinator, Map, Reduce, Filter`, etc)
+* `examples.cpp`: example codes of TPL
 
-## TPL示例
-计算1到10偶数的和: 等价于`Sum( Filter( Range(1, 10), (λx. x%2 == 0) ) )`
+## Sample Codes of TPL
+Sum of Even Numbers Between 1 to 10: `Sum( Filter( Range(1, 10), (λx. x%2 == 0) ) )`
 ```C++
 cout<< Eval< Call< Lib::Sum, Call< Lib::Filter,
                                    Call< Lib::Range, Int<1>, Int<10> >,
@@ -21,7 +31,7 @@ cout<< Eval< Call< Lib::Sum, Call< Lib::Filter,
                                            IsEqual< Mod< Var<0>, Int<2> >,
                                                     Int<0> > > > > >::value::value;
 ```
-定义`Y-Combinator`: 等价于`λf.( λx.(f λy. ((x x) y)) λx.(f λy.((x x) y)) )` 
+Definition of `Y-Combinator`: `λf.( λx.(f λy. ((x x) y)) λx.(f λy.((x x) y)) )` 
 ```C++
 typedef Lambda< ParamList< Var<0> >,
                 Call< Lambda< ParamList< Var<1> >,
@@ -36,22 +46,35 @@ typedef Lambda< ParamList< Var<0> >,
                                                   Var<2> > > > > > >
         YCombinater;
 ```
+`call/cc` Example: `((λk. (k λk.2)) (call/cc λk.k))` = 2
+```C++
+cout<< Eval< Call< Lambda< ParamList< Var<0> >,
+                           Call< Var<0>,
+                                 Lambda< ParamList< Var<0> >,
+                                         Int<2> > > >,
+                   CallCC< Lambda< ParamList< Var<0> >,
+                                   Var<0> > > > >::value::value;
+```
 
 ## Build && Dependency
-* Header Only，具体用法参见`examples.cpp`
-* 编译器需要支持C++11，除此之外无其他(已在`VS2013, g++ 4.8.2, clang++ 3.4`上通过测试)
-* `git clone`后，可 `cmake . && make`，然后`./bin/examples`运行示例程序
+* Header Only，see `examples.cpp` for specific usage
+* The compiler must support `C++11`, codes have been tested on `g++ 4.8.4` and `clang++ 3.4`
+* Since TPL is totally built on C++ template, the default template-recursion-depth is not enough,  
+  you should set `-ftemplate-depth-2000` flag if you use g++ or clang++ to make sure  
+  the template-recursion-depth is deep enough for the example codes.
+* `Linux`: After `git clone`，`cmake . && make`，then `./bin/examples` to run the example code
+* `Windows`: It may work in VS if there's no template-recursion-depth limit in VS, but I have not tried it yet
  
-## 基本类型
+## Basic Types
 * Interger: `Int<N>`
 * Bool:     `Bool<B>`
 * Variable: `Var<N>`
 * Pair:     `Pair<E1, E2>`
-* List:     `List<E0, EN...>`
-* Unit:     `Unit`
+* List:     `List<E0, EN...>`(equivalent to `<Pair E1 Pair<..., Pair<Ek, Unit>...>`)
+* Unit:     `Unit`(equivalent to `void` in other languages)
 * Lambda:   `Lambda< ParamList< Var<0>, Var<N>... >, Body >`
 
-## 基本表达式
+## Basic Expressions
 * +: `Add<E1, E2>`
 * *:  `Mul<E1, E2>`
 * %: `Mod<E1, E2>`
@@ -60,18 +83,20 @@ typedef Lambda< ParamList< Var<0> >,
 * =: `IsEqual<E1, E2>`
 * Pair.1: `Fst<E>`
 * Pair.2: `Snd<E>`
-* List.N: `ListRef<L, N>`
-* ListAppend: `ListAppend<L, E>`
 * Conditional Branching: `If_Then_Else<Cond, E1, E2>`
-* Test is a List: `IsList<E>`
-* Test is a Unit: `IsUnit<E>`
+* Test if it's a Pair: `IsPair<E>`
+* Test if it's a Unit: `IsUnit<E>`
 * Function Call: `Call<Func, Val0, ValN...>`
+* call/cc: `CallCC< Lambda< ParamList< Var<K> >, Body > >`, used to capture the current continuation
 
-## 库函数
-`lib.hpp`主要实现了常用的高阶函数：
-* `YCombinater`: Y组合子，用于实现匿名递归
-* `Reduce`: 归约
-* `Map`: 映射
-* `Filter`: 过滤
-* `Range`: 生成从1到N的List
-* `Sum`: 计算List的和
+## Library Functions
+The Following Functions are provided in `lib.hpp`:
+* `YCombinator`: The famous Y-Combinator which is used to implement anonymous recursions
+* `Reduce`: Combine the elements of a list under the specific operation
+* `Map`: Apply an operation to each element in a list, then return the resulted list
+* `Filter`: Filter the elements of a list under the specific condition
+* `Range`: Generate a list containing 1 to N
+* `Sum`: Calculate the sum of the list
+* `IsList`: Test if it is a List
+* `ListRef`: Return the Nth element of a list(starts from 0)
+* `ListAppend`: Append an element to a list
