@@ -101,12 +101,13 @@ int main()
                                Add< Int<-2>, Int<2> > > >::value,
                    Int<2> >();
 
-    // // ListAppend
-    // typedef List< Int<0>, Int<1>, Int<2>, Int<3>, Int<4>, Int<5> > L4;
-    // StaticCheckEQ< Eval< ListAppend< L3, Int<5> > >::value, Eval<L4>::value >();
-    // StaticCheckEQ< Eval< ListAppend< ListAppend< L3, Add< Int<1>, Int<4> > >,
-    //                                  List< Int<9> > > >::value,
-    //                Eval< ListAppend< L4, List< Int<9> > > >::value >();
+    // ListAppend
+    typedef List< Int<0>, Int<1>, Int<2>, Int<3>, Int<4>, Int<5> > L4;
+    StaticCheckEQ< Eval< Call< Lib::ListAppend, L3, Int<5> > >::value, Eval<L4>::value >();
+    StaticCheckEQ< Eval< Call< Lib::ListAppend,
+                               Call< Lib::ListAppend, L3, Add< Int<1>, Int<4> > >,
+                               List< Int<9> > > >::value,
+                   Eval< Call< Lib::ListAppend, L4, List< Int<9> > > >::value >();
 
 
     // -------------------------------------------------------

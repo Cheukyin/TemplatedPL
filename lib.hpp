@@ -154,6 +154,26 @@ namespace TPL
                               Var<1> > >
                 ListRef;
 
+        // ------------------------------------------------------------------------
+        // _ListAppend = lambda L. lambda E. IsUnit(L) ? Pair<E, Unit> : Pair< Fst(L), ((_ListAppend Snd(L)) E) >
+        // F = lambda f. lambda L. lambda E. IsUnit(L) ? Pair<E, Unit> : Pair< Fst(L), ((f Snd(L)) E) >
+        // _ListAppend = (Y F)
+        typedef Call< YCombinater, Lambda< ParamList< Var<0> >, // f
+                                           Lambda< ParamList< Var<1> >, // L
+                                                   Lambda< ParamList< Var<2> >, // E
+                                                           If_Then_Else< IsUnit< Var<1> >,
+                                                                         Pair< Var<2>, Unit >,
+                                                                         Pair< Fst< Var<1> >,
+                                                                               Call< Call< Var<0>,
+                                                                                           Snd< Var<1> > >,
+                                                                                     Var<2> > > > > > > >
+                _ListAppend;
+        // ListAppend = lambda L E. ((_ListAppend L) E)
+        typedef Lambda< ParamList< Var<0>, Var<1> >,
+                        Call< Call< _ListAppend, Var<0> >,
+                              Var<1> > >
+                ListAppend;
+
     } // namespace Lib
 
 } // namespace TPL

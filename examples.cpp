@@ -47,10 +47,13 @@ int main()
     cout<<endl;
     cout<<"The num at index 2 of List<0, 1, 2, 3>                  : ";
     cout<< Eval< Call< Lib::ListRef, List< Int<0>, Int<1>, Int<2>, Int<3> >, Int<2> > >::value::value;
-    //cout<<endl;
-    //cout<<"The num at index 4 of ListAppend< List<0, 1, 2, 3>, 9 > : ";
-    //cout<< Eval< ListRef< ListAppend< List< Int<0>, Int<1>, Int<2>, Int<3> >, Int<9> >, Int<4> > >::value::value;
-    //cout<<endl;
+    cout<<endl;
+    cout<<"The num at index 4 of ListAppend< List<0, 1, 2, 3>, 9 > : ";
+    cout<< Eval< Call< Lib::ListRef,
+                       Call< Lib::ListAppend,
+                             List< Int<0>, Int<1>, Int<2>, Int<3> >, Int<9> >,
+                       Int<4> > >::value::value;
+    cout<<endl;
 
     cout<<endl;
     cout<<"If 4<5 then 4+5 else 4-5 = ";
