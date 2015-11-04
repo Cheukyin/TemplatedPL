@@ -430,6 +430,7 @@ namespace TPL
         // ------------------------------------------------------------
         // Apply
 
+        // --------------------------------------------
         // BindKont
         template<class Kont,
                  class VarValL,
@@ -477,6 +478,7 @@ namespace TPL
                     value;
         };
 
+        // --------------------------------------------
         // Call
         template<class Fn, class... Val> struct Call;
 
@@ -499,6 +501,47 @@ namespace TPL
         template<class Fn, class... Val, class Environ, class Kont> //
         struct EvalUnderEnvKont< Call<Fn, Val...>, Environ, Kont >
         { typedef typename EvalUnderEnvKont< Fn, Environ, CallKont<Kont, Environ, Val...> >::value value; };
+
+
+
+        // ----------------------------------------------------------------------------------------
+        // call/cc
+
+        // --------------------------------------------
+        // CC
+        template<class Kont> struct CC;
+
+        template<class Kont, class Environ, class Cont>
+        struct EvalUnderEnvKont< CC<Kont>, Environ, Cont >
+        { typedef typename ApplyKont<Kont, typename EnvLookup< Var<0>, Environ >::value >::value value; };
+
+        // --------------------------------------------
+        // CallCC: call with current continuation
+        template<class Fn> struct CallCC;
+
+        // CallCCKont
+        template<class Kont> struct CallCCKont;
+
+        template<class Kont, class Environ, int N, class Body>
+        struct ApplyKont< CallCCKont<Kont>, Closure< Environ, Lambda< ParamList< Var<N> >, Body > > >
+        {
+            // wrap the Kont in a Closure
+            typedef Closure< EmptyEnv, Lambda< ParamList< Var<0> >, CC<Kont> > > CC_Closure;
+
+            typedef typename EvalUnderEnvKont< Body,
+                                               typename EnvExtend< typename VarValListExtend<Var<N>,
+                                                                                             CC_Closure,
+                                                                                             EmptyVarValList>::value,
+                                                                   Environ >::value,
+                                               Kont >::value
+                    value;
+        };
+
+        // --------------------------------------------
+        // CallCC Eval
+        template<class Fn, class Environ, class Kont> //
+        struct EvalUnderEnvKont< CallCC<Fn>, Environ, Kont >
+        { typedef typename EvalUnderEnvKont< Fn, Environ, CallCCKont<Kont> >::value value; };
 
     } // namespace internal
 

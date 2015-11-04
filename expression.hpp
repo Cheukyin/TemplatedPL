@@ -61,6 +61,10 @@ namespace TPL
     // Call
     using internal::Call;          // Call< Func, Val0, ValRest... >
 
+    // CallCC
+    using internal::CallCC;        // CallCC< Lambda< ParamList< Var<K> >,
+                                   //                 BOdy > >
+
 } // namespace TPL
 
 #endif //EXPRESSION_H_

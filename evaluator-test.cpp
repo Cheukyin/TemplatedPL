@@ -298,5 +298,35 @@ int main()
         Sum;
     StaticCheckEQ< Eval< Call< Sum, List< Int<1>, Int<2>, Int<3> > > >::value, Int<6> >();
 
+
+    //----------------------------------------------------------------------------------------------------------
+    // call/cc
+    StaticCheckEQ< Eval< CallCC< Lambda< ParamList< Var<0> >, Int<1> > > >::value, Int<1> >();
+    StaticCheckEQ< Eval< CallCC< Lambda< ParamList< Var<0> >, Call< Var<0>, Int<1> > > > >::value, Int<1> >();
+    StaticCheckEQ< Eval< Add< Int<1>,
+                              CallCC< Lambda< ParamList< Var<0> >,
+                                              Add< Int<2>, Int<3> > > > > >::value,
+                   Int<6> >();
+    StaticCheckEQ< Eval< Add< Int<1>,
+                              CallCC< Lambda< ParamList< Var<0> >,
+                                              Add< Int<2>,
+                                                   Call< Var<0>, Int<3> > > > > > >::value,
+                   Int<4> >();
+    // (((call/cc (lambda (k) k)) (lambda (k) k)) 3) = 3
+    StaticCheckEQ< Eval< Call< Call< CallCC< Lambda< ParamList< Var<0> >,
+                                                     Var<0> > >,
+                                     Lambda< ParamList< Var<0> >,
+                                             Var<0> > >,
+                               Int<3> > >::value,
+                   Int<3> >();
+    // ((lambda (k) (k (lambda (k) 2))) (call/cc (lambda (k) k))) = 2
+    StaticCheckEQ< Eval< Call< Lambda< ParamList< Var<0> >,
+                                       Call< Var<0>,
+                                             Lambda< ParamList< Var<0> >,
+                                                     Int<2> > > >,
+                               CallCC< Lambda< ParamList< Var<0> >,
+                                               Var<0> > > > >::value,
+                   Int<2> >();
+
     return 0;
 }
