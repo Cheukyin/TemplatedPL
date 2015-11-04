@@ -124,6 +124,17 @@ namespace TPL
                               Int<0> > >
                 Sum;
 
+        // -----------------------------------------------------------------------
+        // IsList = lambda L. IsPair(L) ? IsList(Snd(L)) : IsUnit(L)
+        // F = lambda f. lambda L. IsPair(L) ? f(Snd(L)) : IsUnit(L)
+        // IsList = (Y F)
+        typedef Call< YCombinater, Lambda< ParamList< Var<0> >, // f
+                                           Lambda< ParamList< Var<1> >, // L
+                                                   If_Then_Else< IsPair< Var<1> >,
+                                                                 Call< Var<0>, Snd< Var<1> > >,
+                                                                 IsUnit< Var<1> > > > > >
+                IsList;
+
     } // namespace Lib
 
 } // namespace TPL

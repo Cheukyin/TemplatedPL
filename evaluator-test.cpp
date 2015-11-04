@@ -1,5 +1,6 @@
 #include "expression.hpp"
 #include "utils.hpp"
+#include "lib.hpp"
 
 using namespace TPL;
 using CYTL::UTIL::StaticCheckEQ;
@@ -84,12 +85,12 @@ int main()
     StaticCheckEQ< Eval<L1>::value, Eval<P1>::value >();
     StaticCheckEQ< Eval< List< Int<5> > >::value, Pair< Int<5>, Unit > >();
 
-    // // IsList
-    // StaticCheckEQ< Eval< IsList<L1> >::value, Bool<true> >();
-    // StaticCheckEQ< Eval< IsList<P1> >::value, Bool<true> >();
-    // StaticCheckEQ< Eval< IsList<Unit> >::value, Bool<true> >();
-    // StaticCheckEQ< Eval< IsList< Snd<Snd<P1> > > >::value, Bool<true> >();
-    // StaticCheckEQ< Eval< IsList<P> >::value, Bool<false> >();
+    // IsList
+    StaticCheckEQ< Eval< Call< Lib::IsList, L1 > >::value, Bool<true> >();
+    StaticCheckEQ< Eval< Call< Lib::IsList, P1 > >::value, Bool<true> >();
+    StaticCheckEQ< Eval< Call< Lib::IsList, Unit > >::value, Bool<true> >();
+    StaticCheckEQ< Eval< Call< Lib::IsList, Snd< Snd< P1> > > >::value, Bool<true> >();
+    StaticCheckEQ< Eval< Call< Lib::IsList, P > >::value, Bool<false> >();
 
     // //// List.N
     // typedef List< Int<0>, Int<1>, Int<2>, Int<3>, Int<4> > L3;

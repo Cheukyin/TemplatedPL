@@ -38,10 +38,13 @@ int main()
     cout<< Eval< Snd< Pair< Int<4>, Int<5> > > >::value::value;
     cout<<endl;
 
-    //cout<<endl;
-    //cout<<"Is Pair<4, 5> a List?                                   : ";
-    //cout<< Eval< IsList< Pair< Int<4>, Int<5> > > >::value::value;
-    //cout<<endl;
+    cout<<endl;
+    cout<<"Is Pair<4, 5> a List?                                   : ";
+    cout<< Eval< Call< Lib::IsList, Pair< Int<4>, Int<5> > > >::value::value;
+    cout<<endl;
+    cout<<"Is Pair< 4, Pair<5, Unit> > a List?                     : ";
+    cout<< Eval< Call< Lib::IsList, List< Int<4>, Int<5> > > >::value::value;
+    cout<<endl;
     //cout<<"The num at index 2 of List<0, 1, 2, 3>                  : ";
     //cout<< Eval< ListRef< List< Int<0>, Int<1>, Int<2>, Int<3> >, Int<2> > >::value::value;
     //cout<<endl;
@@ -130,6 +133,27 @@ int main()
                                                                 Call< Call< Var<1>, Var<1> >,
                                                                       Add< Var<0>, Int<-1> > > > > > > >,
                        Int<6> > >::value::value;
+    cout<<endl;
+
+    // ----------------------------------------------------------------------------------------
+    // call/cc
+    cout<<endl;
+    cout<<"(((call/cc (lambda (k) k)) (lambda (k) k)) 3)              = "; // 3
+    cout<< Eval< Call< Call< CallCC< Lambda< ParamList< Var<0> >,
+                                             Var<0> > >,
+                             Lambda< ParamList< Var<0> >,
+                                     Var<0> > >,
+                       Int<3> > >::value::value;
+    cout<<endl;
+
+    // call/cc
+    cout<<"((lambda (k) (k (lambda (k) 2))) (call/cc (lambda (k) k))) = "; // 2
+    cout<< Eval< Call< Lambda< ParamList< Var<0> >,
+                               Call< Var<0>,
+                                     Lambda< ParamList< Var<0> >,
+                                             Int<2> > > >,
+                       CallCC< Lambda< ParamList< Var<0> >,
+                                       Var<0> > > > >::value::value;
     cout<<endl;
 
     return 0;
