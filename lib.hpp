@@ -135,6 +135,25 @@ namespace TPL
                                                                  IsUnit< Var<1> > > > > >
                 IsList;
 
+        // -----------------------------------------------------------------------
+        // _ListRef = lambda L. lambda N. N==0 ? Fst(L) : ((_ListRef Snd(L)) N-1)
+        // F = lambda f. lambda L. lambda N. N==0 ? Fst(L) : ((f Snd(L)) N-1)
+        // _ListRef = (Y F)
+        typedef Call< YCombinater, Lambda< ParamList< Var<0> >, // f
+                                           Lambda< ParamList< Var<1> >, // L
+                                                   Lambda< ParamList< Var<2> >, // N
+                                                           If_Then_Else< IsEqual< Var<2>, Int<0> >,
+                                                                         Fst< Var<1> >,
+                                                                         Call< Call< Var<0>,
+                                                                                     Snd< Var<1> > >,
+                                                                               Add< Var<2>, Int<-1> > > > > > > >
+                _ListRef;
+        // ListRef = lambda L N. ((_ListRef L) N)
+        typedef Lambda< ParamList< Var<0>, Var<1> >,
+                        Call< Call< _ListRef, Var<0> >,
+                              Var<1> > >
+                ListRef;
+
     } // namespace Lib
 
 } // namespace TPL

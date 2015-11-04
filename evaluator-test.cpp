@@ -92,12 +92,14 @@ int main()
     StaticCheckEQ< Eval< Call< Lib::IsList, Snd< Snd< P1> > > >::value, Bool<true> >();
     StaticCheckEQ< Eval< Call< Lib::IsList, P > >::value, Bool<false> >();
 
-    // //// List.N
-    // typedef List< Int<0>, Int<1>, Int<2>, Int<3>, Int<4> > L3;
-    // StaticCheckEQ< Eval< ListRef< L3, Add< Int<2>, Int<0> > > >::value, Int<2> >();
-    // StaticCheckEQ< Eval< ListRef< ListRef< L1, Add< Int<0>, Int<0> > >,
-    //                               Add< Int<-2>, Int<2> > > >::value,
-    //                Int<2> >();
+    //// List.N
+    typedef List< Int<0>, Int<1>, Int<2>, Int<3>, Int<4> > L3;
+    StaticCheckEQ< Eval< Call< Lib::ListRef, L3, Add< Int<2>, Int<0> > > >::value, Int<2> >();
+    StaticCheckEQ< Eval< Call< Lib::ListRef,
+                               Call< Lib::ListRef,
+                                     L1, Add< Int<0>, Int<0> > >,
+                               Add< Int<-2>, Int<2> > > >::value,
+                   Int<2> >();
 
     // // ListAppend
     // typedef List< Int<0>, Int<1>, Int<2>, Int<3>, Int<4>, Int<5> > L4;
