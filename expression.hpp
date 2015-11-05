@@ -42,12 +42,6 @@ namespace TPL
 
     // List type
     using internal::List;          // List<E, ERest...>
-    // //IsList
-    // using internal::IsList;        // IsList<E>
-    // // List.N
-    // using internal::ListRef;       // ListRef<L, N>
-    // // ListAppend
-    // using internal::ListAppend;    // ListAppend<L, E>
 
     // If_Then_Else
     using internal::If_Then_Else;  // If_Then_Else<Cond, E1, E2>

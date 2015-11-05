@@ -3,8 +3,8 @@ TemplatedPL(TPL) is a DSL built upon C++ template,
 therefore, all evaluations of expressions in TPL would be accomplished at compile time.  
   
 Essentially, TPL is a simple Lisp Interpreter,  
-which supports  
-`Lexical Closure`, `Multi-Parameter Lambda Expression` and `First Class Continuation(call/cc)`.  
+which supports `Lexical Closure`, `Multi-Parameter Lambda Expression`  
+and `First Class Continuation(call/cc)`.  
    
 TPL, however, doesn't support `Named Function`,  
 so you must write a `Y-Combinator` to implement recursive functions.  
@@ -23,7 +23,7 @@ If you want to learn more Template-Meta-Programming skills, you should read Chap
 * `examples.cpp`: example codes of TPL
 
 ## Sample Codes of TPL
-Sum of Even Numbers Between 1 to 10: `Sum( Filter( Range(1, 10), (λx. x%2 == 0) ) )`
+* Sum of Even Numbers Between 1 to 10: `Sum( Filter( Range(1, 10), (λx. x%2 == 0) ) )`
 ```C++
 cout<< Eval< Call< Lib::Sum, Call< Lib::Filter,
                                    Call< Lib::Range, Int<1>, Int<10> >,
@@ -31,7 +31,8 @@ cout<< Eval< Call< Lib::Sum, Call< Lib::Filter,
                                            IsEqual< Mod< Var<0>, Int<2> >,
                                                     Int<0> > > > > >::value::value;
 ```
-Definition of `Y-Combinator`: `λf.( λx.(f λy. ((x x) y)) λx.(f λy.((x x) y)) )` 
+
+* Definition of `Y-Combinator`: `λf.( λx.(f λy. ((x x) y)) λx.(f λy.((x x) y)) )` 
 ```C++
 typedef Lambda< ParamList< Var<0> >,
                 Call< Lambda< ParamList< Var<1> >,
@@ -46,7 +47,8 @@ typedef Lambda< ParamList< Var<0> >,
                                                   Var<2> > > > > > >
         YCombinater;
 ```
-`call/cc` Example: `((λk. (k λk.2)) (call/cc λk.k))` = 2
+
+* `call/cc` Example: `((λk. (k λk.2)) (call/cc λk.k))` = 2
 ```C++
 cout<< Eval< Call< Lambda< ParamList< Var<0> >,
                            Call< Var<0>,
